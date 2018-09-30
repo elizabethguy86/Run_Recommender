@@ -14,7 +14,7 @@ my_cols =  ['average_speed',
           'start_date_local',
           'start_latlng',
           'start_longitude',
-          'map']
+          ]
 
 '''use sample of data to inform columns above'''
 sample.to_dict()
