@@ -1,7 +1,7 @@
 from stravalib.client import Client
 import json
 import pandas as pd
-TOKEN = token 
+TOKEN = token
 client_me = Client(access_token=TOKEN)
 
 
@@ -41,7 +41,7 @@ df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
 
 
 streams = client_me.get_activity_streams(123, types=types, resolution='medium')
-routes = client_me.get_routes(athlete_id=24810276)
+routes = client_me.get_routes(athlete_id=id)
 
 #  Result is a dictionary object.  The dict's key are the stream type.
 if 'distance' in streams.keys():
