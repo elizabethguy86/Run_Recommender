@@ -1,8 +1,18 @@
 from stravalib.client import Client
 import json
 import pandas as pd
-TOKEN = 'a28defa6db38f9732492b90a7d5faf0109b8166b'
+TOKEN = token 
 client_me = Client(access_token=TOKEN)
+
+
+'''Start Flask'''
+
+FLASK_APP=app.py flask run
+
+'''Get tokens from MongoDB'''
+tmux
+db.strava_tokens.find()
+
 activities = client_me.get_activities(limit=1000)
 #looking at the columns I'm interested in
 sample = list(activities)[0]
@@ -16,7 +26,7 @@ my_cols =  ['average_speed',
           'start_longitude',
           ]
 
-'''use sample of data to inform columns above'''
+'''use sample of data to inform choice of columns above'''
 sample.to_dict()
 data = []
 for activity in activities:
@@ -31,6 +41,7 @@ df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
 
 
 streams = client_me.get_activity_streams(123, types=types, resolution='medium')
+routes = client_me.get_routes(athlete_id=24810276)
 
 #  Result is a dictionary object.  The dict's key are the stream type.
 if 'distance' in streams.keys():
