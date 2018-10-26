@@ -65,6 +65,9 @@ def make_tokens_list(l):
 
     return unique
 
+'''Extract polyline from dataframe'''
+one_point = dict(df.iloc[idx,map_column]
+summary_polyline = one_point['summary_polyline']
 
 '''Draw activity Map'''
 #get coordinates from activity first
