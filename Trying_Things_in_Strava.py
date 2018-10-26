@@ -60,7 +60,7 @@ def make_tokens_list(l):
     for token in tokens:
         tokens_list.append(token['token'])
     for item in tokens_list:
-        if item not in unique:
+        if item not in unique: #if someone double-clicks, you get copies of the token
             unique.append(item)
 
     return unique
