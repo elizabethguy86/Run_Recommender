@@ -13,39 +13,6 @@ FLASK_APP=app.py flask run
 tmux
 db.strava_tokens.find()
 
-activities = client_me.get_activities(limit=1000)
-#looking at the columns I'm interested in
-sample = list(activities)[0]
-my_cols = ['upload_id',
-          'average_speed',
-          'distance',
-          'elapsed_time',
-          'total_elevation_gain',
-          'type',
-          'start_date_local',
-          'start_latlng',
-          'start_longitude']
-
-'''use sample of data to inform choice of columns above'''
-sample.to_dict()
-data = []
-for activity in activities:
-    my_dict = activity.to_dict()
-    data.append([my_dict.get(x) for x in my_cols])
-
-'''Create DataFrame for the colummns of interest'''
-df = pd.DataFrame(data, columns=my_cols)
-
-'''Convert 'distance' to readable miles'''
-df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
-
-
-streams = client_me.get_activity_streams(123, types=types, resolution='medium')
-routes = client_me.get_routes(athlete_id=id)
-
-#  Result is a dictionary object.  The dict's key are the stream type.
-if 'distance' in streams.keys():
-    print(streams['distance'].data)
 
 '''Get list of users and their tokens from MongoDB'''
 mc = MongoClient(host='localhost:47017')
@@ -64,6 +31,50 @@ def make_tokens_list(l):
             unique.append(item)
 
     return unique
+
+'''Decide on attributes to use'''
+activities = client_me.get_activities(limit=1000)
+#looking at the columns I'm interested in
+sample = list(activities)[0]
+my_cols = ['upload_id',
+          'average_speed',
+          'distance',
+          'elapsed_time',
+          'total_elevation_gain',
+          'type',
+          'start_date_local',
+          'start_latlng',
+          'start_longitude']
+
+'''use sample of data to inform choice of columns above'''
+sample.to_dict()
+
+'''Make dataframe of all activities'''
+def activities_to_dict(tokens):
+    data = []
+    for token in tokens:
+        client_current = Client(access_token=token)
+        activities = client_current.get_activities(limit=1000)
+        for activity in activities:
+            my_dict = activity.to_dict()
+            data.append([my_dict.get(x) for x in my_cols])
+        #make large dataframe for columns of interest for all tokens
+    return pd.DataFrame(data, columns=my_cols)
+
+'''Create DataFrame for the colummns of interest'''
+df = pd.DataFrame(data, columns=my_cols)
+
+'''Convert 'distance' to readable miles'''
+df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
+
+
+streams = client_me.get_activity_streams(123, types=types, resolution='medium')
+routes = client_me.get_routes(athlete_id=id)
+
+#  Result is a dictionary object.  The dict's key are the stream type.
+if 'distance' in streams.keys():
+    print(streams['distance'].data)
+
 
 '''Extract polyline from dataframe'''
 one_point = dict(df.iloc[idx,map_column]
