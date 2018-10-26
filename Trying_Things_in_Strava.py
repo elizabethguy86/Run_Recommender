@@ -16,15 +16,15 @@ db.strava_tokens.find()
 activities = client_me.get_activities(limit=1000)
 #looking at the columns I'm interested in
 sample = list(activities)[0]
-my_cols =  ['average_speed',
+my_cols = ['upload_id',
+          'average_speed',
           'distance',
           'elapsed_time',
           'total_elevation_gain',
           'type',
           'start_date_local',
           'start_latlng',
-          'start_longitude',
-          ]
+          'start_longitude']
 
 '''use sample of data to inform choice of columns above'''
 sample.to_dict()
