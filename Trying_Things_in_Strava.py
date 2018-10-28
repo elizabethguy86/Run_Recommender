@@ -44,7 +44,7 @@ my_cols = ['upload_id',
           'type',
           'start_date_local',
           'start_latlng',
-          'start_longitude']
+          'start_longitude', 'map']
 
 '''use sample of data to inform choice of columns above'''
 sample.to_dict()
