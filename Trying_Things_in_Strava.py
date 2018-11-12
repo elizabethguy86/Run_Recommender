@@ -1,6 +1,7 @@
 from stravalib.client import Client
 import json
 import pandas as pd
+from pymongo import MongoClient
 TOKEN = token
 client_me = Client(access_token=TOKEN)
 
@@ -14,7 +15,8 @@ tmux
 db.strava_tokens.find()
 
 
-'''Get list of users and their tokens from MongoDB'''
+'''Get list of users and their tokens from MongoDB.
+Instructions: Set up tunnel ssh ssh -NL 47017:localhost:27017 #your EC2 name'''
 mc = MongoClient(host='localhost:47017')
 users = mc['runpaw']
 tokens = list(users.strava_tokens.find())
