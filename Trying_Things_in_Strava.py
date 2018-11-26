@@ -2,8 +2,7 @@ from stravalib.client import Client
 import json
 import pandas as pd
 from pymongo import MongoClient
-TOKEN = token
-client_me = Client(access_token=TOKEN)
+
 
 
 '''Start Flask'''
@@ -14,6 +13,8 @@ FLASK_APP=app.py flask run
 tmux
 db.strava_tokens.find()
 
+'''Remap localhost to EC2 server'''
+! ssh -NL 47017:localhost:27017 quesadilla
 
 '''Get list of users and their tokens from MongoDB.
 Instructions: Set up tunnel ssh ssh -NL 47017:localhost:27017 #your EC2 name'''
