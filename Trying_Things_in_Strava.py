@@ -124,11 +124,13 @@ import folium
 
 #get start point for map
 lat, long = coordinates[0]
-map = folium.Map(location=[lat, long], zoom_start=12.2)
+m = folium.Map(location=[lat, long], zoom_start=12.2)
 
-folium.PolyLine(
-        coordinates,
-        weight=2,
-        color='blue'
-    ).add_to(map)
-map
+for idx, route in enumerate(map_coordinates):
+    colors = ['blue','green','red','orange','purple']
+    folium.PolyLine(
+            route,
+            weight=2,
+            color=colors[idx]
+        ).add_to(m)
+m
