@@ -109,6 +109,7 @@ activity_poly = activity.to_dict()['map']['summary_polyline']
 
 # Make a list of polylines from the recommmendations df
 def make_polyline_lst(recommendations):
+    '''takes in column of map data and returns a list of polylines'''
     recommend_dict = dict(recommendations['map'])
     polylines = []
     for k, v in recommend_dict.items():
@@ -127,6 +128,7 @@ lat, long = coordinates[0]
 m = folium.Map(location=[lat, long], zoom_start=12.2)
 
 for idx, route in enumerate(map_coordinates):
+    '''Map all routes in different colors'''
     colors = ['blue','green','red','orange','purple']
     folium.PolyLine(
             route,
