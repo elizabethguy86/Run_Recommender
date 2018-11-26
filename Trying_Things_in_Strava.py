@@ -107,6 +107,14 @@ activity.to_dict()
 #get polyline to decode for activity of interested
 activity_poly = activity.to_dict()['map']['summary_polyline']
 
+# Make a list of polylines from the recommmendations df
+def make_polyline_lst(recommendations):
+    recommend_dict = dict(recommendations['map'])
+    polylines = []
+    for k, v in recommend_dict.items():
+        polylines.append(v['summary_polyline'])
+    return polylines
+
 import polyline
 #decode polyline object into coordinates
 coordinates = polyline.decode(activity_poly)
