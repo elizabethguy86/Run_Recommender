@@ -78,6 +78,23 @@ if 'distance' in streams.keys():
     print(streams['distance'].data)
 
 
+# Function to recommmend runs
+def recommend_runs(user_input, df, columns_to_check):
+    '''Inputs are an array of user-specified elevation gain in meters and miles, dataframe of activities, and the 
+    columns of the dataframe to check for cosine similarity.  Output is a dataframe of route recommendations.'''
+    
+    #requires sklearn.cosine_similarity
+    
+    similarity_df = df.loc[:, columns_to_check]
+    user_input = user_input.reshape(1,len(columns_to_check))
+    user_input_reshaped = user_input.reshape(1,-1)
+    similarities = cosine_similarity(similarity_df, user_input_reshaped)
+    sort_indices = np.argsort(similarities, axis = None)
+    top_5 = sort_indices[-5:]
+    recommend_indices = list(top_5[::-1]) #reverse the order
+    recommendations = df.iloc[recommend_indices, :]
+    return recommendations
+
 '''Extract polyline from dataframe'''
 one_point = dict(df.iloc[idx,map_column]
 summary_polyline = one_point['summary_polyline']
