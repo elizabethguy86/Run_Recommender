@@ -78,14 +78,30 @@ if 'distance' in streams.keys():
     print(streams['distance'].data)
 
 
+def standardize_inputs(user_input, df):
+    '''Standardize the user inputs for cosine similarity comparison'''
+    elevation = user_input[0]
+    distance = user_input[1]
+    std_elevation = (elevation - df['total_elevation_gain'].mean())/df['total_elevation_gain'].std()
+    std_distance = (distance - df['miles_converted'].mean())/df['miles_converted'].std()
+    return np.array([std_elevation,std_distance])
+
+#standardize the columns of interest for your dataframe
+similarity_df['elevation_std'] = scale(similarity_df['total_elevation_gain'])
+similarity_df['miles_std'] = scale(similarity_df['miles_converted'])
+
+
 # Function to recommmend runs
 def recommend_runs(user_input, df, columns_to_check):
-    '''Inputs are an array of user-specified elevation gain in meters and miles, dataframe of activities, and the 
-    columns of the dataframe to check for cosine similarity.  Output is a dataframe of route recommendations.'''
+    '''Inputs are a list of user-specified elevation gain in meters and miles to run, 
+    dataframe of activities, and the columns of the dataframe to check 
+    for cosine similarity. Columns to check should be in standardized form.  
+    Output is a dataframe of route recommendations.'''
     
     #requires sklearn.cosine_similarity
     
     similarity_df = df.loc[:, columns_to_check]
+    user_input = standardize_inputs(user_input, df)
     user_input = user_input.reshape(1,len(columns_to_check))
     user_input_reshaped = user_input.reshape(1,-1)
     similarities = cosine_similarity(similarity_df, user_input_reshaped)
