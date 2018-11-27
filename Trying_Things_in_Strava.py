@@ -192,6 +192,14 @@ import polyline
 #decode polyline object into coordinates
 coordinates = polyline.decode(activity_poly)
 
+
+#make list of coordinate lists
+polylines = make_polyline_lst(recommendations)
+map_coordinates = []
+for line in polylines:
+    coordinates = polyline.decode(line)
+    map_coordinates.append(coordinates)
+
 #draw some maps
 import folium
 
