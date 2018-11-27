@@ -180,10 +180,9 @@ activity.to_dict()
 #get polyline to decode for activity of interested
 activity_poly = activity.to_dict()['map']['summary_polyline']
 
-# Make a list of polylines from the recommmendations df
-def make_polyline_lst(recommendations):
-    '''takes in column of map data and returns a list of polylines'''
-    recommend_dict = dict(recommendations['map'])
+# Make a list of polylines from the recommmendations dictionary
+def make_polyline_lst(recommend_dict):
+    '''Take in a dictionary of map objects and return list of polylines'''
     polylines = []
     for k, v in recommend_dict.items():
         polylines.append(v['summary_polyline'])
