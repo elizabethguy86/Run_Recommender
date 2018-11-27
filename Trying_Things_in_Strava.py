@@ -189,10 +189,6 @@ def make_polyline_lst(recommendations):
         polylines.append(v['summary_polyline'])
     return polylines
 
-import polyline
-#decode polyline object into coordinates
-coordinates = polyline.decode(activity_poly)
-
 
 #make list of coordinate lists
 polylines = make_polyline_lst(recommendations)
@@ -205,7 +201,7 @@ for line in polylines:
 import folium
 
 #get start point for map
-lat, long = coordinates[0]
+lat, long = map_coordinates[0][0]
 m = folium.Map(location=[lat, long], zoom_start=12.2)
 
 for idx, route in enumerate(map_coordinates):
@@ -216,4 +212,4 @@ for idx, route in enumerate(map_coordinates):
             weight=2,
             color=colors[idx]
         ).add_to(m)
-m
+m #show the map
