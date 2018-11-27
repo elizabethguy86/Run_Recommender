@@ -142,12 +142,13 @@ def recommend_runs(user_input, df, columns_to_check):
     '''Inputs are a list of user-specified elevation gain in meters and miles to run, 
     dataframe of activities, and the columns of the dataframe to check 
     for cosine similarity. Columns to check should be in standardized form.  
-    Output is a dataframe of route recommendations.'''
+    Output is a dictionary of polyline maps for route recommendations.'''
     
     #requires sklearn.cosine_similarity
     
+    df['elevation_std'] = scale(df['total_elevation_gain'])
+    df['miles_std'] = scale(df['miles_converted'])
     similarity_df = df.loc[:, columns_to_check]
-    user_input = standardize_inputs(user_input, df)
     user_input = user_input.reshape(1,len(columns_to_check))
     user_input_reshaped = user_input.reshape(1,-1)
     similarities = cosine_similarity(similarity_df, user_input_reshaped)
@@ -155,7 +156,7 @@ def recommend_runs(user_input, df, columns_to_check):
     top_5 = sort_indices[-5:]
     recommend_indices = list(top_5[::-1]) #reverse the order
     recommendations = df.iloc[recommend_indices, :]
-    return recommendations
+    return dict(recommendations['map'])
 
 '''Extract polyline from dataframe'''
 one_point = dict(df.iloc[idx,map_column]
