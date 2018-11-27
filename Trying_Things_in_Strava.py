@@ -3,6 +3,7 @@ from stravalib import model
 import json
 import pandas as pd
 import numpy as np
+import polyline
 from pymongo import MongoClient
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import scale
