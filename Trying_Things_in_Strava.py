@@ -1,8 +1,12 @@
 from stravalib.client import Client
+from stravalib import model
 import json
 import pandas as pd
+import numpy as np
 from pymongo import MongoClient
-
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.preprocessing import scale
+from math import radians, cos, sin, asin, sqrt
 
 
 '''Start Flask'''
@@ -70,6 +74,8 @@ df = pd.DataFrame(data, columns=my_cols)
 '''Convert 'distance' to readable miles'''
 df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
 
+'''Only use runs'''
+df = df[df['type'] == 'Run']
 
 streams = client_me.get_activity_streams(123, types=types, resolution='medium')
 routes = client_me.get_routes(athlete_id=id)
@@ -78,7 +84,46 @@ routes = client_me.get_routes(athlete_id=id)
 if 'distance' in streams.keys():
     print(streams['distance'].data)
 
+#filter datframe by proximity
+def haversine(lat1, lon1, lat2, lon2):
+    """
+    Calculate the great circle distance between two points 
+    on the earth (specified in decimal degrees).
 
+    paraphrased from 
+    https://stackoverflow.com/questions/4913349/haversine-formula-in-python-bearing-and-distance-between-two-gps-points
+    """
+    # convert decimal degrees to radians 
+    lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+    # haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    c = 2 * asin(sqrt(a)) 
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
+    return c * r
+
+def find_distances(coordinate1, coordinate2):
+    lat1, lon1 = coordinate1
+    lat2, lon2 = coordinate2
+    distance = haversine(lat1, lon1, lat2, lon2)
+    return distance
+
+df_starts = df[~df['start_latlng'].isna()]
+df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: x.split(","))
+df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: tuple(x))
+def make_floats(tup):
+    x, y = tup
+    return (float(x), float(y))
+
+df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: make_floats(x))
+
+#make distance away column. Start is a user input latlng coordinate in tuple form
+df_starts['distance_away'] = df_starts['start_latlng'].apply(lambda x: find_distances(start, x))
+
+# For cosine similarity.  Standardize user inputs according to matching data columns
+# in dataframe.
 def standardize_inputs(user_input, df):
     '''Standardize the user inputs for cosine similarity comparison'''
     elevation = user_input[0]
