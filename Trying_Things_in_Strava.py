@@ -110,17 +110,26 @@ def find_distances(coordinate1, coordinate2):
     distance = haversine(lat1, lon1, lat2, lon2)
     return distance
 
-df_starts = df[~df['start_latlng'].isna()]
-df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: x.split(","))
-df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: tuple(x))
+
 def make_floats(tup):
     x, y = tup
     return (float(x), float(y))
 
-df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: make_floats(x))
 
 #make distance away column. Start is a user input latlng coordinate in tuple form
-df_starts['distance_away'] = df_starts['start_latlng'].apply(lambda x: find_distances(start, x))
+def get_distances(df, start):
+    '''Takes in a dataframe of activities and returns a dataframe with start and end latlng as tuples with floats.
+    Also returns the distance away from a starting point input.'''
+    df_starts = df[(~df['start_latlng'].isna()) & (~df['end_latlng'].isna())]
+    df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: x.split(","))
+    df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: tuple(x))
+    df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: make_floats(x))
+    df_starts['end_latlng'] = df_starts['end_latlng'].apply(lambda x: x.split(","))
+    df_starts['end_latlng'] = df_starts['end_latlng'].apply(lambda x: tuple(x))
+    df_starts['end_latlng'] = df_starts['end_latlng'].apply(lambda x: make_floats(x))
+    df_starts['distance_away'] = df_starts['start_latlng'].apply(lambda x: find_distances(start, x))
+    return df_starts
+    
 
 # For cosine similarity.  Standardize user inputs according to matching data columns
 # in dataframe.
