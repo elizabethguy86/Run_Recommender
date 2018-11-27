@@ -43,15 +43,15 @@ def make_tokens_list(l):
 activities = client_me.get_activities(limit=1000)
 #looking at the columns I'm interested in
 sample = list(activities)[0]
-my_cols = ['upload_id',
-          'average_speed',
-          'distance',
-          'elapsed_time',
-          'total_elevation_gain',
-          'type',
-          'start_date_local',
-          'start_latlng',
-          'start_longitude', 'map']
+cols = ['upload_id',
+        'average_speed',
+        'distance',
+        'elapsed_time',
+        'total_elevation_gain',
+        'type',
+        'start_date_local',
+        'start_latlng',
+        'end_latlng', 'map']
 
 '''use sample of data to inform choice of columns above'''
 sample.to_dict()
@@ -64,12 +64,12 @@ def activities_to_dict(tokens):
         activities = client_current.get_activities(limit=1000)
         for activity in activities:
             my_dict = activity.to_dict()
-            data.append([my_dict.get(x) for x in my_cols])
+            data.append([my_dict.get(x) for x in cols])
         #make large dataframe for columns of interest for all tokens
-    return pd.DataFrame(data, columns=my_cols)
+    return pd.DataFrame(data, columns=cols)
 
 '''Create DataFrame for the colummns of interest'''
-df = pd.DataFrame(data, columns=my_cols)
+df = pd.DataFrame(data, columns=cols)
 
 '''Convert 'distance' to readable miles'''
 df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
