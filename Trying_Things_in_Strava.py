@@ -89,6 +89,7 @@ if 'distance' in streams.keys():
     print(streams['distance'].data)
 
 #filter datframe by proximity
+
 def haversine(lat1, lon1, lat2, lon2):
     """
     Calculate the great circle distance between two points 
@@ -199,14 +200,40 @@ for line in polylines:
     coordinates = polyline.decode(line)
     map_coordinates.append(coordinates)
 
+#make unique route list
+
+def find_centroids(coordinate_lst):
+    '''find the centroid lat, long for a list of coordinates for each map'''
+    centroids = []
+    for l in coordinate_lst:
+        lats = []
+        longs = []
+        for point in l:
+            lats.append(point[0])
+            longs.append(point[1])
+        centroid = (round(np.mean(lats), 3), round(np.mean(longs), 3))
+        centroids.append(centroid)
+    return centroids
+
+def return_unique_idx(map_coordinates):
+    '''return indices for the unique maps in a list of coordinates'''
+    cent_dict = {}
+    centroids = find_centroids(map_coordinates)
+    for idx, c in enumerate(centroids):
+        cent_dict[c] = idx
+    return list(cent_dict.values())
+
+indices = return_unique_idx(map_coordinates)
+unique_coordinates = [map_coordinates[i] for i in indices]
+
 #draw some maps
 import folium
 
 #get start point for map
-lat, long = map_coordinates[0][0]
+lat, long = unique_coordinates[0][0]
 m = folium.Map(location=[lat, long], zoom_start=12.2)
 
-for idx, route in enumerate(map_coordinates):
+for idx, route in enumerate(unique_coordinates[0:5]):
     '''Map all routes in different colors'''
     colors = ['blue','green','red','orange','purple']
     folium.PolyLine(
