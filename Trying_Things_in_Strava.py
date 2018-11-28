@@ -67,7 +67,10 @@ def activities_to_dict(tokens):
             my_dict = activity.to_dict()
             data.append([my_dict.get(x) for x in cols])
         #make large dataframe for columns of interest for all tokens
-    return pd.DataFrame(data, columns=cols)
+    df = pd.DataFrame(data, columns=cols)
+    #convert distance to miles
+    df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
+    return df
 
 '''Create DataFrame for the colummns of interest'''
 df = pd.DataFrame(data, columns=cols)
