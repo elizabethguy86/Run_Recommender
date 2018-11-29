@@ -168,10 +168,10 @@ def recommend_runs(request, df, columns_to_check):
     user_input_reshaped = user_input.reshape(1,-1)
     similarities = cosine_similarity(similarity_df, user_input_reshaped)
     sort_indices = np.argsort(similarities, axis = None)
-    top_10 = sort_indices[-10:]
-    recommend_indices = list(top_10[::-1]) #reverse the order
+    top_20 = sort_indices[-20:]
+    recommend_indices = list(top_20[::-1]) #reverse the order
     recommendations = df.iloc[recommend_indices, :]
-    return dict(recommendations['map'])
+    return dict(recommendations['map']), recommend_indices
 
 '''Extract polyline from dataframe'''
 one_point = dict(df.iloc[idx,map_column]
