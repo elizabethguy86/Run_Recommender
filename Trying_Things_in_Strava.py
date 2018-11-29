@@ -152,7 +152,7 @@ similarity_df['miles_std'] = scale(similarity_df['miles_converted'])
 
 
 # Function to recommmend runs
-def recommend_runs(user_input, df, columns_to_check):
+def recommend_runs(request, df, columns_to_check):
     '''Inputs are a list of user-specified elevation gain in meters and miles to run, 
     dataframe of activities, and the columns of the dataframe to check 
     for cosine similarity. Columns to check should be in standardized form.  
@@ -163,12 +163,13 @@ def recommend_runs(user_input, df, columns_to_check):
     df['elevation_std'] = scale(df['total_elevation_gain'])
     df['miles_std'] = scale(df['miles_converted'])
     similarity_df = df.loc[:, columns_to_check]
+    user_input = standardize_inputs(request, df)
     user_input = user_input.reshape(1,len(columns_to_check))
     user_input_reshaped = user_input.reshape(1,-1)
     similarities = cosine_similarity(similarity_df, user_input_reshaped)
     sort_indices = np.argsort(similarities, axis = None)
-    top_5 = sort_indices[-5:]
-    recommend_indices = list(top_5[::-1]) #reverse the order
+    top_10 = sort_indices[-10:]
+    recommend_indices = list(top_10[::-1]) #reverse the order
     recommendations = df.iloc[recommend_indices, :]
     return dict(recommendations['map'])
 
