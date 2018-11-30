@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np 
 from collections import defaultdict, Counter
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import scale
+
 
 
 
