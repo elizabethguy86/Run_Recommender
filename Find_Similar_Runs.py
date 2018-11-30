@@ -68,3 +68,19 @@ def get_indices(groups):
         group = list(group)
         indices_to_use.append(group[0])
     return indices_to_use
+
+def merge_groups(groups):
+    #need to fix the case where there are chains of intersections:  A in B and B in C
+    merged_groups = []
+    unique_groups = []
+    for group1 in groups:
+        for group2 in groups:
+            if group1 != group2 and group1.intersection(group2):
+                merged = group1.union(group2)
+                merged_groups.append(merged)
+            else:
+                merged_groups.append(group1)
+    for g in merged_groups:
+        if g not in unique_groups:
+            unique_groups.append(g)
+    return unique_groups
