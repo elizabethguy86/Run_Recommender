@@ -125,7 +125,8 @@ def make_floats(tup):
 def get_distances(df, start):
     '''Takes in a dataframe of activities and returns a dataframe with start and end latlng as tuples with floats.
     Also returns the distance away from a starting point input.'''
-    df_starts = df[(~df['start_latlng'].isna()) & (~df['end_latlng'].isna())]
+   
+    df_starts = df[(~df['start_latlng'].isna()) & (~df['end_latlng'].isna())].copy()
     df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: x.split(","))
     df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: tuple(x))
     df_starts['start_latlng'] = df_starts['start_latlng'].apply(lambda x: make_floats(x))
@@ -157,11 +158,10 @@ def recommend_runs(request, df, columns_to_check):
     dataframe of activities, and the columns of the dataframe to check 
     for cosine similarity. Columns to check should be in standardized form.  
     Output is a dictionary of polyline maps for route recommendations.'''
-    
+    df = df.copy()
     #requires sklearn.cosine_similarity
-    
-    df['elevation_std'] = scale(df['total_elevation_gain'])
-    df['miles_std'] = scale(df['miles_converted'])
+    df.loc[:, 'elevation_std'] = scale(df['total_elevation_gain'].values.reshape(-1, 1))
+    df.loc[:, 'miles_std'] = scale(df['miles_converted'].values.reshape(-1, 1))
     similarity_df = df.loc[:, columns_to_check]
     user_input = standardize_inputs(request, df)
     user_input = user_input.reshape(1,len(columns_to_check))
@@ -186,16 +186,19 @@ activity.to_dict()
 activity_poly = activity.to_dict()['map']['summary_polyline']
 
 # Make a list of polylines from the recommmendations dictionary
-def make_polyline_lst(recommend_dict):
-    '''Take in a dictionary of map objects and return list of polylines'''
-    polylines = []
+def make_polyline_dict(recommend_dict):
+    '''Take in a dictionary of map objects and return dictionary of polylines{index:polyline} and the indices
+    for the polylines as a list.'''
+    polylines = {}
     for k, v in recommend_dict.items():
-        polylines.append(v['summary_polyline'])
-    return polylines
-
+        v = ast.literal_eval(v)
+        if v['summary_polyline'] != None: #make sure the polyline list isn't empty
+            polylines[k] = v['summary_polyline']
+    indices = list(polylines.keys())
+    return polylines, indices
 
 #make list of coordinate lists
-polylines = make_polyline_lst(recommendations)
+polylines = make_polyline_dict(recommendations)
 map_coordinates = []
 for line in polylines:
     coordinates = polyline.decode(line)
@@ -204,7 +207,6 @@ for line in polylines:
 #make unique route list
 
 def find_centroids(coordinate_lst):
-    '''find the centroid lat, long for a list of coordinates for each map'''
     centroids = []
     for l in coordinate_lst:
         lats = []
@@ -216,30 +218,73 @@ def find_centroids(coordinate_lst):
         centroids.append(centroid)
     return centroids
 
-def return_unique_idx(map_coordinates):
-    '''return indices for the unique maps in a list of coordinates'''
-    cent_dict = {}
-    centroids = find_centroids(map_coordinates)
-    for idx, c in enumerate(centroids):
-        cent_dict[c] = idx
-    return list(cent_dict.values())
+def make_comparison_df(coordinate_lst, df, indices):
+    centroids = find_centroids(coordinate_lst)
+    lats = []
+    longs = []
+    elevation_lst = []
+    for c in centroids:
+        lats.append(c[0])
+        longs.append(c[1])
+    for idx in indices: #get the elevation for the runs in the suggestion list.
+        row = df.loc[idx] 
+        elevation_lst.append(row['total_elevation_gain'])
+    comparison_df = pd.DataFrame({'lats': lats, 'longs':longs, 'elevation':elevation_lst})
+    return comparison_df
 
-indices = return_unique_idx(map_coordinates)
-unique_coordinates = [map_coordinates[i] for i in indices]
+comparison_df = make_comparison_df(map_coordinates, working_df, indices)
+comparison_array = comparison_df.values
+comparison_array_std = (comparison_array - np.mean(comparison_array, axis=0)) / np.std(comparison_array, axis=0)
+#make comparisons with all the datapoints in the comparison array
+cosine_sim_arr = cosine_similarity(comparison_array_std)
 
-#draw some maps
-import folium
+#Use Hierarchical Clustering to find groupings for the routes
+threshold = 0.05
+Z = hierarchy.linkage(cosine_sim_arr, 'average', metric="cosine")
+C = hierarchy.fcluster(Z, threshold, criterion="distance")
+ids = list(range(20)) #make a list of numbers 0-19 to use as indices for a cluster groups dictionary
+C
 
-#get start point for map
-lat, long = unique_coordinates[0][0]
-m = folium.Map(location=[lat, long], zoom_start=12.2)
+cluster_groups = defaultdict(list)
+for idx, grouping in enumerate(C):
+    cluster_groups[grouping].append(idx)
+def get_indices(groups):
+    '''Takes in dictionary of cluster_groupings and returns a list of indices
+    to use for route suggestions'''
+    sort_groups = sorted(list(groups.values()), key=len)
+    sort_groups = sort_groups[::-1]
+    indices_to_use = []
+    for group in sort_groups:
+        if len(group) >= 1:
+            indices_to_use.append(group[0])
+    return indices_to_use
 
-for idx, route in enumerate(unique_coordinates[0:5]):
-    '''Map all routes in different colors'''
-    colors = ['blue','green','red','orange','purple']
-    folium.PolyLine(
-            route,
-            weight=2,
-            color=colors[idx]
-        ).add_to(m)
-m #show the map
+indices_to_use = get_indices(cluster_groups)
+
+unique_coordinates = [map_coordinates[i] for i in indices_to_use]
+
+def map_indices(indices_to_use, indices):
+    '''Takes in indices_to_use from 20 suggested routes and the actual indices of the 20 routes in the larger
+    dataframe and returns a mapping of indices_to_use back to the index in the larger dataframe. 
+    Use: to retrieve stats for suggested routes'''
+    mapping = {}
+    for idx, i in enumerate(indices):
+        if idx in indices_to_use:
+            mapping[idx] = i
+    return mapping
+
+#use for later route stats lookups
+mapping_dict = map_indices(indices_to_use, indices)
+
+'''obsolete?'''
+# def return_unique_idx(map_coordinates):
+#     '''return indices for the unique maps in a list of coordinates'''
+#     cent_dict = {}
+#     centroids = find_centroids(map_coordinates)
+#     for idx, c in enumerate(centroids):
+#         cent_dict[c] = idx
+#     return list(cent_dict.values())
+
+# indices = return_unique_idx(map_coordinates)
+# unique_coordinates = [map_coordinates[i] for i in indices]
+
