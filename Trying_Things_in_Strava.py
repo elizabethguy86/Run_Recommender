@@ -276,15 +276,14 @@ def map_indices(indices_to_use, indices):
 #use for later route stats lookups
 mapping_dict = map_indices(indices_to_use, indices)
 
-'''obsolete?'''
-# def return_unique_idx(map_coordinates):
-#     '''return indices for the unique maps in a list of coordinates'''
-#     cent_dict = {}
-#     centroids = find_centroids(map_coordinates)
-#     for idx, c in enumerate(centroids):
-#         cent_dict[c] = idx
-#     return list(cent_dict.values())
+#route stats for the routes displayed on the map
+def return_route_stats(mapping_dict, indices_to_use, df):
+    mapping = []
+    for i in indices_to_use[0:5]:
+        mapping.append(mapping_dict[i])
+    slice_df = df.iloc[mapping]
+    return slice_df.loc[:, ['total_elevation_gain', 'miles_converted']].reset_index()
+        
+return_route_stats(mapping_dict, indices_to_use, df) #shows the stats for the displayed routes
 
-# indices = return_unique_idx(map_coordinates)
-# unique_coordinates = [map_coordinates[i] for i in indices]
 
