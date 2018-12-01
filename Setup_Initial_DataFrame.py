@@ -20,6 +20,22 @@ mc = MongoClient(host='localhost:47017')
 users = mc['runpaw']
 tokens = list(users.strava_tokens.find())
 
+def make_tokens_list(l):
+    '''Take a list of users from MongoDB and extract their
+       tokens from the dictionary objects in the list'''
+    tokens_list = []
+    unique = []
+    for token in tokens:
+        tokens_list.append(token['token'])
+    for item in tokens_list:
+        if item not in unique: #if someone double-clicks, you get copies of the token
+            unique.append(item)
+
+    return unique
+
+#get all the unique tokens
+tokens_unique = make_tokens_list(tokens)
+
 #columns to use:
 cols = ['upload_id',
         'average_speed',
@@ -31,8 +47,8 @@ cols = ['upload_id',
         'start_latlng',
         'end_latlng', 'map']
 
-Activities = Activities(tokens, cols)
-df = Activities.activities_to_dict()
+events = Activities(tokens, cols)
+df = events.activities_to_dict()
 
 '''Only use runs'''
 df = df[df['type'] == 'Run']
