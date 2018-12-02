@@ -41,7 +41,7 @@ def make_tokens_list(l):
     return unique
 
 '''Decide on attributes to use'''
-activities = client_me.get_activities(limit=1000)
+activities = client.get_activities(limit=1000)
 #looking at the columns I'm interested in
 sample = list(activities)[0]
 cols = ['upload_id',
@@ -72,11 +72,6 @@ def activities_to_dict(tokens):
     df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
     return df
 
-'''Create DataFrame for the colummns of interest'''
-df = pd.DataFrame(data, columns=cols)
-
-'''Convert 'distance' to readable miles'''
-df['miles_converted'] = [x/1609.3440122044242 for x in df['distance']]
 
 '''Only use runs'''
 df = df[df['type'] == 'Run']
