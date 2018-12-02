@@ -1,11 +1,7 @@
 import pandas as pd
 import numpy as np
 from Activities_Dictionary import Activities
-from stravalib.client import Client
 from pymongo import MongoClient
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import scale
-from math import radians, cos, sin, asin, sqrt
 
 '''Get tokens from MongoDB'''
 tmux
