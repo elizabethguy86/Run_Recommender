@@ -1,11 +1,14 @@
 
-from Trying_Things_in_Strava import make_polyline_dict
+from Activities_Dictionary import Activities
 import folium
 
 '''initialize the map. map_coordinates should come from your make_polyline_lst function,
 which returns a dictionary of polylines'''
 
-polylines = make_polyline_dict(recommendations)
+recommendations = Run_Recommender(df, (latitude, longitude))
+recommend_dict = recommendations.recommend_runs([100, 5], 3) #must do this before creating polylines
+
+polylines, indices = recommendations.make_polyline_dict()
 map_coordinates = []
 for line in list(polylines.values()):
     coordinates = polyline.decode(line)
