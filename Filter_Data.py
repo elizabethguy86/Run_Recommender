@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import ast
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import scale
 from math import radians, cos, sin, asin, sqrt
@@ -7,9 +8,9 @@ from collections import defaultdict, Counter
 from scipy.cluster import  hierarchy
 
 class Run_Recommender():
-'''For the purpose of filtering data according to the user-specified inputs.  Data is
-first filtered by location.  Then, Cosine Similarity is used to identify the most similar
-routes within the specified area based on elevation gain and distance to run.'''
+    '''For the purpose of filtering data according to the user-specified inputs.  Data is
+    first filtered by location.  Then, Cosine Similarity is used to identify the most similar
+    routes within the specified area based on elevation gain and distance to run.'''
 
     def __init__(self, df, start):
         '''takes in a dataframe created from Activities class using the 
@@ -60,10 +61,8 @@ routes within the specified area based on elevation gain and distance to run.'''
         df_starts.loc[:,'distance_away'] = df_starts.loc[:,'start_latlng'].apply(lambda x: self.find_distances(start, x))
         return df_starts
 
-    # #latitude/longitude start location
+    # latitude/longitude start location
     # start = (47.529832, -121.987695)
-
-    # df_starts = get_distances(df, start)
 
     def standardize_inputs(self, user_input, df):
         '''Standardize the user inputs for cosine similarity'''
@@ -75,10 +74,9 @@ routes within the specified area based on elevation gain and distance to run.'''
 
     def recommend_runs(self, request, dist):
         '''Inputs are a list of user-specified elevation gain in meters and miles to run, 
-        dataframe of activities, and the columns of the dataframe to check 
-        for cosine similarity. Columns to check should be in standardized form.  
+        and distance away for willingness to travel to a run.  
         Output is a dictionary of polyline maps for route recommendations.'''
-        df = get_distances(self.df, self.start)
+        df = self.get_distances()
         self.request = request
         self.dist = dist 
         #requires sklearn.cosine_similarity
@@ -92,11 +90,11 @@ routes within the specified area based on elevation gain and distance to run.'''
         similarities = cosine_similarity(similarity_df, user_input_reshaped)
         sort_indices = np.argsort(similarities, axis = None)
         top_20 = sort_indices[-20:]
-        #recommend_indices = list(top_20[::-1]) #reverse the order
+        recommend_indices = list(top_20[::-1]) #reverse the order
         recommendations = df.iloc[recommend_indices, :]
-        return dict(recommendations['map']), #recommend_indices
+        return dict(recommendations['map'])
 
-    def make_polyline_dict(self, recommend_dict):
+    def make_polyline_dict(self):
         '''Take in a dictionary of map objects and return dictionary of polylines{index:polyline} and the indices
         for the polylines as a list.'''
         recommend_dict = self.recommend_runs(self.request, self.dist)
