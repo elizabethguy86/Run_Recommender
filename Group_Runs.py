@@ -16,11 +16,11 @@ class GroupRuns():
 
     def map_coordinates(self):
         #get coordinates for the polylines in the dictionary
-        self.map_coordinates = []
+        map_coordinates = []
         for line in list(self.polylines.values()):
             coordinates = polyline.decode(line)
             map_coordinates.append(coordinates)
-        return self.map_coordinates
+        return map_coordinates
     
     def find_centroids(self, coordinate_lst):
         centroids = []
@@ -55,6 +55,7 @@ class GroupRuns():
         return cosine_sim_arr
     
     def make_groups(self, threshold):
+        cosine_sim_arr = self.make_comparison_array()
         Z = hierarchy.linkage(cosine_sim_arr, 'average', metric="cosine")
         C = hierarchy.fcluster(Z, threshold, criterion="distance")
         cluster_groups = defaultdict(list)
