@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 import ast
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.preprocessing import scale
+from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.preprocessing import scale, StandardScaler
 from math import radians, cos, sin, asin, sqrt
 from collections import defaultdict, Counter
 from scipy.cluster import  hierarchy
@@ -15,7 +15,7 @@ class Run_Recommender():
     def __init__(self, df, start):
         '''takes in a dataframe created from Activities class using the 
         activities_to_dict() method'''
-        self.df = df
+        self.df = df[df['miles_converted'] >= 1]
         self.start = start
 
     def haversine(self, lat1, lon1, lat2, lon2):
@@ -63,7 +63,7 @@ class Run_Recommender():
 
     # latitude/longitude start location
     # start = (47.529832, -121.987695)
-
+    
     def standardize_inputs(self, user_input, df):
         '''Standardize the user inputs for cosine similarity'''
         elevation = user_input[0]
@@ -79,28 +79,30 @@ class Run_Recommender():
         df = self.get_distances()
         self.request = request
         self.dist = dist 
-        #requires sklearn.cosine_similarity
+        scaler = StandardScaler()
+        #requires sklearn.euclidean_distances()
         df = df[df['distance_away']<= self.dist] #filter dataframe for the requested distance range
         if len(df) == 0:
             raise Exception("No Runs in this area.  Try again with different coordinates")
         else: 
+            df = df[df['distance_away']<= dist] #filter dataframe for the requested distance range
             df.loc[:, 'elevation_std'] = scale(df['total_elevation_gain'].values.reshape(-1, 1))
             df.loc[:, 'miles_std'] = scale(df['miles_converted'].values.reshape(-1, 1))
             similarity_df = df.loc[:, ['elevation_std', 'miles_std']]
-            user_input = self.standardize_inputs(self.request, df)
+            user_input = self.standardize_inputs(request, df)
             user_input = user_input.reshape(1,2)
             user_input_reshaped = user_input.reshape(1,-1)
-            similarities = cosine_similarity(similarity_df, user_input_reshaped)
+            similarities = euclidean_distances(similarity_df, user_input_reshaped)
             sort_indices = np.argsort(similarities, axis = None)
-            top_20 = sort_indices[-20:]
-            recommend_indices = list(top_20[::-1]) #reverse the order
+            top_20 = sort_indices[0:20]
+            recommend_indices = list(top_20) #make it a list for slicing
             recommendations = df.iloc[recommend_indices, :]
-            return dict(recommendations['map'])
+            return dict(recommendations['map']), similarities
 
     def make_polyline_dict(self):
         '''Take in a dictionary of map objects and return dictionary of polylines{index:polyline} and the indices
         for the polylines as a list.'''
-        recommend_dict = self.recommend_runs(self.request, self.dist)
+        recommend_dict, similarities = self.recommend_runs(self.request, self.dist)
         polylines = {}
         for k, v in recommend_dict.items():
             v = ast.literal_eval(v)
