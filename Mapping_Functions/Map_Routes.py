@@ -9,7 +9,7 @@ takes in polylines, indices from your make_polyline_dict() method from Run_Recom
 class'''
 
 recommendations = Run_Recommender(df, (latitude, longitude))
-recommend_dict = recommendations.recommend_runs([100, 5], 3) #must do this before creating polylines
+recommend_dict = recommendations.recommend_runs([elevation, distance], miles_away) #must do this before creating polylines
 
 polylines, indices = recommendations.make_polyline_dict()
 
