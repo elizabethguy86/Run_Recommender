@@ -81,18 +81,21 @@ class Run_Recommender():
         self.dist = dist 
         #requires sklearn.cosine_similarity
         df = df[df['distance_away']<= self.dist] #filter dataframe for the requested distance range
-        df.loc[:, 'elevation_std'] = scale(df['total_elevation_gain'].values.reshape(-1, 1))
-        df.loc[:, 'miles_std'] = scale(df['miles_converted'].values.reshape(-1, 1))
-        similarity_df = df.loc[:, ['elevation_std', 'miles_std']]
-        user_input = self.standardize_inputs(self.request, df)
-        user_input = user_input.reshape(1,2)
-        user_input_reshaped = user_input.reshape(1,-1)
-        similarities = cosine_similarity(similarity_df, user_input_reshaped)
-        sort_indices = np.argsort(similarities, axis = None)
-        top_20 = sort_indices[-20:]
-        recommend_indices = list(top_20[::-1]) #reverse the order
-        recommendations = df.iloc[recommend_indices, :]
-        return dict(recommendations['map'])
+        if len(df) == 0:
+            raise Exception("No Runs in this area.  Try again with different coordinates")
+        else: 
+            df.loc[:, 'elevation_std'] = scale(df['total_elevation_gain'].values.reshape(-1, 1))
+            df.loc[:, 'miles_std'] = scale(df['miles_converted'].values.reshape(-1, 1))
+            similarity_df = df.loc[:, ['elevation_std', 'miles_std']]
+            user_input = self.standardize_inputs(self.request, df)
+            user_input = user_input.reshape(1,2)
+            user_input_reshaped = user_input.reshape(1,-1)
+            similarities = cosine_similarity(similarity_df, user_input_reshaped)
+            sort_indices = np.argsort(similarities, axis = None)
+            top_20 = sort_indices[-20:]
+            recommend_indices = list(top_20[::-1]) #reverse the order
+            recommendations = df.iloc[recommend_indices, :]
+            return dict(recommendations['map'])
 
     def make_polyline_dict(self):
         '''Take in a dictionary of map objects and return dictionary of polylines{index:polyline} and the indices
