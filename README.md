@@ -10,3 +10,6 @@ The proposed solution to the route finding issue is to utilze runs collected fro
 
 **Instructions:**
 Use `Setup_Initial_DataFrame.py` to create your initial dataframe of activities. Uses instance of the Activities class to create a dataframe containing features specified in the cols variable.  Note that user tokens (required for data access) are stored in a MongoDB on AWS in this instance.  Thus, code to extract tokens will differ from situation to situation.
+
+Once your dataframe is created, you can use the `Run_Recommender` class from 
+`Filter_Data.py`.  Run_Recommender is initialized with the dataframe and a (lat, long) tuple for starting coordinates.  Recommend runs by calling self.recommend_runs(), which requires a request input, list of [elevation gain(meters), distance(miles) to run]) and a distance in miles that you are willing to travel from the starting coordinates for a run.
