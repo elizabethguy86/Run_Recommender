@@ -55,6 +55,9 @@ class GroupRuns():
         return cosine_sim_arr
     
     def make_groups(self, threshold):
+        '''Uses cosine similarity as a distance metric for unsupervised flat clustering.
+        Threshold determines stopping point for RSS of each vector to its centroid for all 
+        vector/centroid groups. Threshold may be modified.'''
         cosine_sim_arr = self.make_comparison_array()
         Z = hierarchy.linkage(cosine_sim_arr, 'average', metric="cosine")
         C = hierarchy.fcluster(Z, threshold, criterion="distance")
