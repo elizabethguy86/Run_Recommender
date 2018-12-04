@@ -37,12 +37,14 @@ class Run_Recommender():
         return c * r
 
     def find_distances(self, coordinate1, coordinate2):
+        '''Find the distance between two coordinates'''
         lat1, lon1 = coordinate1
         lat2, lon2 = coordinate2
         distance = self.haversine(lat1, lon1, lat2, lon2)
         return distance
 
     def make_floats(self, tup):
+        '''makes a tuple of floats. Used for coordinate unpacking'''
         x, y = tup
         return (float(x), float(y))
 
