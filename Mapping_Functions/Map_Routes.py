@@ -8,14 +8,14 @@ import folium
 takes in polylines, indices from your make_polyline_dict() method from Run_Recommender
 class'''
 
-recommendations = Run_Recommender(df, (latitude, longitude))
-recommend_dict = recommendations.recommend_runs([elevation, distance], miles_away) #must do this before creating polylines
+#recommendations = Run_Recommender(df, (latitude, longitude))
+#recommend_dict = recommendations.recommend_runs([elevation, distance], miles_away) #must do this before creating polylines
 
-polylines, indices = recommendations.make_polyline_dict()
+# polylines, indices = recommendations.make_polyline_dict()
 
-Group = GroupRuns(polylines, indices, df)
-map_coordinates = Group.map_coordinates()
-indices_to_use = Group.make_groups(threshold=0.05) #threshold may be changed for cosine sim distance groups
+# Group = GroupRuns(polylines, indices, df)
+# map_coordinates = Group.map_coordinates()
+# indices_to_use = Group.make_groups(threshold=0.05) """threshold may be changed for cosine sim distance groups"""
 
 def map_indices(indices_to_use, indices):
     '''Takes in indices_to_use from 20 suggested routes and the actual indices of the 20 routes in the larger
@@ -27,7 +27,7 @@ def map_indices(indices_to_use, indices):
             mapping[idx] = i
     return mapping
         
-mapping_dict = map_indices(indices_to_use, indices)
+#mapping_dict = map_indices(indices_to_use, indices)
 
 def return_route_stats(mapping_dict, indices_to_use, df):
     '''Returns the elevation gain and miles for the routes that will be returned'''
@@ -36,19 +36,19 @@ def return_route_stats(mapping_dict, indices_to_use, df):
     return slice_df.loc[:, ['total_elevation_gain', 'miles_converted']].reset_index()
 
 #dataframe of indices from original df, elevation gain(m), and the miles of each route
-return_route_stats(mapping_dict, indices_to_use, df)
+#return_route_stats(mapping_dict, indices_to_use, df)
 
 #get start point for the map
-lat, long = map_coordinates[0][0]
-m = folium.Map(location=[lat, long], zoom_start=12.2)
+# lat, long = map_coordinates[0][0]
+# m = folium.Map(location=[lat, long], zoom_start=12.2)
 
-for idx, route in enumerate(unique_coordinates[0:5]):
-    colors = ['blue','green','red','orange','purple']
-    folium.PolyLine(
-            route,
-            weight=2,
-            color=colors[idx]
-        ).add_to(m)
+# for idx, route in enumerate(unique_coordinates[0:5]):
+#     colors = ['blue','green','red','orange','purple']
+#     folium.PolyLine(
+#             route,
+#             weight=2,
+#             color=colors[idx]
+#         ).add_to(m)
 
 #create legend for colors to route number
 legend_html = '''<div style= "position: fixed; 
@@ -67,5 +67,5 @@ legend_html = '''<div style= "position: fixed;
                   style="color:purple"></i>
     </div>'''
     
-m.get_root().html.add_child(folium.Element(legend_html)) #add legend to map
-m
+#m.get_root().html.add_child(folium.Element(legend_html)) #add legend to map
+#m
