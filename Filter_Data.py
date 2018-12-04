@@ -64,13 +64,13 @@ class Run_Recommender():
     # latitude/longitude start location
     # start = (47.529832, -121.987695)
     
-    def standardize_inputs(self, user_input, df):
-        '''Standardize the user inputs for cosine similarity'''
-        elevation = user_input[0]
-        distance = user_input[1]
-        std_elevation = (elevation - df['total_elevation_gain'].mean())/df['total_elevation_gain'].std()
-        std_distance = (distance - df['miles_converted'].mean())/df['miles_converted'].std()
-        return np.array([std_elevation,std_distance])
+    # def standardize_inputs(self, user_input, df):
+    #     '''Standardize the user inputs for cosine similarity'''
+    #     elevation = user_input[0]
+    #     distance = user_input[1]
+    #     std_elevation = (elevation - df['total_elevation_gain'].mean())/df['total_elevation_gain'].std()
+    #     std_distance = (distance - df['miles_converted'].mean())/df['miles_converted'].std()
+    #     return np.array([std_elevation,std_distance])
 
     def recommend_runs(self, request, dist):
         '''Inputs are a list of user-specified elevation gain in meters and miles to run, 
@@ -86,12 +86,16 @@ class Run_Recommender():
             raise Exception("No Runs in this area.  Try again with different coordinates")
         else: 
             df = df[df['distance_away']<= dist] #filter dataframe for the requested distance range
-            df.loc[:, 'elevation_std'] = scale(df['total_elevation_gain'].values.reshape(-1, 1))
-            df.loc[:, 'miles_std'] = scale(df['miles_converted'].values.reshape(-1, 1))
-            similarity_df = df.loc[:, ['elevation_std', 'miles_std']]
-            user_input = self.standardize_inputs(request, df)
-            user_input = user_input.reshape(1,2)
-            user_input_reshaped = user_input.reshape(1,-1)
+            # df.loc[:, 'elevation_std'] = scale(df['total_elevation_gain'].values.reshape(-1, 1))
+            # df.loc[:, 'miles_std'] = scale(df['miles_converted'].values.reshape(-1, 1))
+            # similarity_df = df.loc[:, ['elevation_std', 'miles_std']]
+            # user_input = self.standardize_inputs(request, df)
+            # user_input = user_input.reshape(1,2)
+            # user_input_reshaped = user_input.reshape(1,-1)
+            X = df.loc[:,['total_elevation_gain', 'miles_converted']]
+            scaler.fit(X)
+            similarity_df = scaler.transform(X)
+            user_input_reshaped = scaler.transform(np.array(request).reshape(1,-1))
             similarities = euclidean_distances(similarity_df, user_input_reshaped)
             sort_indices = np.argsort(similarities, axis = None)
             top_20 = sort_indices[0:20]
