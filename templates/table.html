@@ -1,0 +1,14 @@
+<table border="1">
+        <thead>
+          <th>elevation (meters)</th>
+          <th>miles</th>
+        </thead>
+        <tbody>
+          {% for x, y in data %}  <!--start for loop over variable data-->
+            <tr>                  <!-- on each row -->
+              <td>{{ x }}</td>    <!-- write variable x -->
+              <td>{{ y }}</td>    <!-- write variable y -->
+          </tr>                   <!-- end the row -->
+          {% endfor %}            <!-- end for loop -->
+      </tbody>
+      </table>
