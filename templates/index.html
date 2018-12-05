@@ -65,7 +65,7 @@
         <div class="row">
           <div class="col-lg-8 mx-auto">
             <h2 class="text-white mb-4">Recommend Runs</h2>
-            <p class="text-white-50"> Input your preferred start location here:
+            <p class="text-white-50"> Get Started Here:
                 <p>Click the button to get your current GPS coordinates.</p>
 
                 <button onclick="getLocation()">Try It</button>
@@ -88,13 +88,11 @@
                     "<br>Longitude: " + position.coords.longitude;
                 }
                 </script>
-                
-                <form class="form-inline d-flex" method="POST" action="/request">
-                  <input type="text" name="user_input_location" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputCoordinates" placeholder="(Latitude, Longitude)">
-                </form>
               </p>
-            <p class="text-white-50"> Input your preferred elevation (meters) and distance (miles) here:
+
+            <p class="text-white-50"> Input your preferred start location, elevation gain (meters) and distance (miles) here:
                 <form class="form-inline d-flex" method="POST" action="/request">
+                    <input type="text" name="user_input_location" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputCoordinates" placeholder="Latitude, Longitude">
                     <input type="text" name="user_input" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputRequest" placeholder="Elevation(m), Distance">
                     <button type="submit" value = "Submit" class="btn btn-primary mx-auto">Find Runs</button>
                 </form>

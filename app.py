@@ -22,8 +22,11 @@ def hello_world():
 @app.route('/request', methods=['POST'])
 def make_recommendations():
     '''This will be used with actual user inputs.'''
-    #recommendations = Run_Recommender(df, (request.form['user_input_location']))
-    recommendations = Run_Recommender(df, (47.508802, -122.464284))
+    location = request.form['user_input_location']
+    location = location.split(',')
+    location = (float(location[0]), float(location[1]))
+    recommendations = Run_Recommender(df, location)
+    #recommendations = Run_Recommender(df, (47.508802, -122.464284))
     req = request.form['user_input']
     req = req.split(',')
     req = [float(req[0]), float(req[1])]
@@ -37,7 +40,8 @@ def make_recommendations():
     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
     mapping = map_runs(unique_coordinates)
-    return render_template('index.html', table = abbrev_stats.to_html(), map='<iframe src="mapping" width="1000" height="500"> </iframe>')
+    i_frame = '<iframe src="/map/' + str(unique_coordinates) + '" width="1000" height="500"> </iframe>'
+    return render_template('index.html', table = abbrev_stats.to_html(), map=i_frame)
 
 def table_practice():
     recommendations = Run_Recommender(df, (47.508802, -122.464284))
@@ -53,12 +57,15 @@ def table_practice():
     return abbrev_stats.to_html(), unique_coordinates
 
 
-#@app.route('/map')
+@app.route('/map/<unique_coordinates>')
 def map_runs(unique_coordinates):
-    
+    print(unique_coordinates)
+    if isinstance(unique_coordinates, str):
+        unique_coordinates = eval(unique_coordinates)
     #get start point for the map
+    print("unique_coordinates[0][0]: ", unique_coordinates[0][0])
     lat, long = unique_coordinates[0][0]
-    m = folium.Map(location=[lat, long], zoom_start=12.2)
+    m = folium.Map(location=[lat, long], zoom_start=12.3)
     for idx, route in enumerate(unique_coordinates[0:5]):
         colors = ['blue','green','red','orange','purple']
         folium.PolyLine(
@@ -83,8 +90,6 @@ def map_runs(unique_coordinates):
                     style="color:purple"></i>
         </div>'''
     m.get_root().html.add_child(folium.Element(legend_html)) #add legend to map
-    #html_string = m.get_root().render() #get map html
-    #m.save('test.html')
     mapdata = BytesIO()
     m.save(mapdata, close_file=False)
     html = mapdata.getvalue()
