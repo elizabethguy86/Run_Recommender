@@ -41,7 +41,7 @@ def make_recommendations():
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
     mapping = map_runs(unique_coordinates)
     i_frame = '<iframe src="/map/' + str(unique_coordinates) + '" width="1000" height="500"> </iframe>'
-    return render_template('index.html', table = abbrev_stats.to_html(), map=i_frame)
+    return render_template('index.html', table = abbrev_stats.to_html(classes=''), map=i_frame)
 
 def table_practice():
     recommendations = Run_Recommender(df, (47.508802, -122.464284))

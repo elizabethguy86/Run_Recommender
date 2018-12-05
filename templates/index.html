@@ -84,8 +84,8 @@
                 }
                 
                 function showPosition(position) {
-                    x.innerHTML = "Latitude: " + position.coords.latitude + 
-                    "<br>Longitude: " + position.coords.longitude;
+                    x.innerHTML = "Latitude: " + position.coords.latitude.toFixed(3) + 
+                    "<br>Longitude: " + position.coords.longitude.toFixed(4);
                 }
                 </script>
               </p>
@@ -101,7 +101,7 @@
             <p class="text-white mb-4"> Route Information Below:</p>
 
             <div class="row justify-content-center no-gutters">
-              <div id="table" class="text-white-50" class="row justify-content-center no-gutters">
+              <div id="table" class="text-white-50">
                 {{table|safe}}
               </div>
               <div>
