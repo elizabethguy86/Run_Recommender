@@ -17,3 +17,6 @@ Once your dataframe is created, you can use the `Run_Recommender()` class from
 Several of the runs in the database are repeats of the same route, or very similar to each other.  To group similar runs together, use the `Group_Runs.py` file and the `GroupRuns()` class.  The `map_coordinates` method will return a list of all the map coordinates from your polylines, retrieved from the `Run_Recommender()` class.  The `make_groups` method will group similar runs together, and then select one run from each group (prioritizing selecting from large groups first, as frequently-run routes are likely more popular).  `make_groups` returns indices that can be used to filter through the list of map coordinates from the `map_coordinates` method for later mapping of the suggested routes.
 
 Use the functions in `Mapping_Functions` to make maps of your suggested routes.
+
+**Website:**
+The `index.html` file in templates works in conjunction with the `app.py` file.  `app.py` can be run on a FLASK server using the command `FLASK_APP=app.py flask run`.
