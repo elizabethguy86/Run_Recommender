@@ -23,7 +23,7 @@ def hello_world():
 def make_recommendations():
     '''This will be used with actual user inputs.'''
     recommendations = Run_Recommender(df, (request.form['user_input_location']))
-    recommend_dict, similarities = recommendations.recommend_runs(request.form[['user_input']], 5)
+    recommend_dict, similarities = recommendations.recommend_runs(request.form['user_input'], 5)
     polylines, indices = recommendations.make_polyline_dict()
     Group = GroupRuns(polylines, indices, df)
     map_coordinates = Group.map_coordinates()
@@ -32,7 +32,7 @@ def make_recommendations():
     mapping_dict = mapfun.map_indices(indices_to_use, indices)
     stats = return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
-    return abbrev_stats.to_html(), unique_coordinates
+    return render_template('index.html', table = abbrev_stats.to_html(), map = map_runs(unique_coordinates))
 
 def table_practice():
     recommendations = Run_Recommender(df, (47.508802, -122.464284))
@@ -49,8 +49,8 @@ def table_practice():
 
 
 @app.route('/map')
-def map_runs():
-    unique_coordinates = table_practice()[1]
+def map_runs(unique_coordinates):
+    
     #get start point for the map
     lat, long = unique_coordinates[0][0]
     m = folium.Map(location=[lat, long], zoom_start=12.2)
