@@ -17,22 +17,27 @@ df = data.iloc[:,1::]
 
 @app.route('/') #landing page
 def hello_world():
-    return render_template('index.html', table=table_practice()[0], map='<iframe src="/map" width="1000" height="500"> </iframe>')
+    return render_template('index.html')
 
 @app.route('/request', methods=['POST'])
 def make_recommendations():
     '''This will be used with actual user inputs.'''
-    recommendations = Run_Recommender(df, (request.form['user_input_location']))
-    recommend_dict, similarities = recommendations.recommend_runs(request.form['user_input'], 5)
+    #recommendations = Run_Recommender(df, (request.form['user_input_location']))
+    recommendations = Run_Recommender(df, (47.508802, -122.464284))
+    req = request.form['user_input']
+    req = req.split(',')
+    req = [float(req[0]), float(req[1])]
+    recommend_dict, similarities = recommendations.recommend_runs(req, 5)
     polylines, indices = recommendations.make_polyline_dict()
     Group = GroupRuns(polylines, indices, df)
     map_coordinates = Group.map_coordinates()
     indices_to_use = Group.make_groups(threshold=0.05)
     unique_coordinates = [map_coordinates[i] for i in indices_to_use]
     mapping_dict = mapfun.map_indices(indices_to_use, indices)
-    stats = return_route_stats(mapping_dict, indices_to_use, df)
+    stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
-    return render_template('index.html', table = abbrev_stats.to_html(), map = map_runs(unique_coordinates))
+    mapping = map_runs(unique_coordinates)
+    return render_template('index.html', table = abbrev_stats.to_html(), map='<iframe src="mapping" width="1000" height="500"> </iframe>')
 
 def table_practice():
     recommendations = Run_Recommender(df, (47.508802, -122.464284))
@@ -48,7 +53,7 @@ def table_practice():
     return abbrev_stats.to_html(), unique_coordinates
 
 
-@app.route('/map')
+#@app.route('/map')
 def map_runs(unique_coordinates):
     
     #get start point for the map
