@@ -1,3 +1,6 @@
+
+__pycache__/
+Mapping_Functions/__pycache__/
 .ipynb_checkpoints/
 discrete_frechet/
 Testing_Only.ipynb
