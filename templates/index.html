@@ -66,15 +66,15 @@
           <div class="col-lg-8 mx-auto">
             <h2 class="text-white mb-4">Recommend Runs</h2>
             <p class="text-white-50"> Input your preferred start location here:
-                <form class="form-inline d-flex">
-                    <input type="email" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputEmail" placeholder="(Latitude, Longitude)">
-                    <button type="submit" class="btn btn-primary mx-auto">Find Location</button>
+                <form class="form-inline d-flex" method="POST" action=/request>
+                  user_input_location: <input type="text" name="user_input_location" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputCoordinates" placeholder="(Latitude, Longitude)">
+                    <button type="submit" value = "Submit" class="btn btn-primary mx-auto">Find Location</button>
                 </form>
               </p>
             <p class="text-white-50"> Input your preferred elevation (meters) and distance (miles) here:
-                <form class="form-inline d-flex">
-                    <input type="email" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputEmail" placeholder="Elevation(m), Distance">
-                    <button type="submit" class="btn btn-primary mx-auto">Find Runs</button>
+                <form class="form-inline d-flex" method="POST" action=/request>
+                    user_input: <input type="text" name="user_input" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputRequest" placeholder="Elevation(m), Distance">
+                    <button type="submit" value = "Submit" class="btn btn-primary mx-auto">Find Runs</button>
             </p>
             
             <div id="table">

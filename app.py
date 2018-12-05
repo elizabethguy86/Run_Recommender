@@ -19,10 +19,11 @@ df = data.iloc[:,1::]
 def hello_world():
     return render_template('index.html', table=table_practice()[0], map='<iframe src="/map" width="1000" height="500"> </iframe>')
 
-#@app.route('/request', methods=['POST'])
+@app.route('/request', methods=['POST'])
 def make_recommendations():
-    recommendations = Run_Recommender(df, (data['user_input_location']))
-    recommend_dict, similarities = recommendations.recommend_runs([data['user_input']], 5)
+    '''This will be used with actual user inputs.'''
+    recommendations = Run_Recommender(df, (request.form['user_input_location']))
+    recommend_dict, similarities = recommendations.recommend_runs(request.form[['user_input']], 5)
     polylines, indices = recommendations.make_polyline_dict()
     Group = GroupRuns(polylines, indices, df)
     map_coordinates = Group.map_coordinates()
@@ -31,7 +32,7 @@ def make_recommendations():
     mapping_dict = mapfun.map_indices(indices_to_use, indices)
     stats = return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
-    return abbrev_stats.to_html()
+    return abbrev_stats.to_html(), unique_coordinates
 
 def table_practice():
     recommendations = Run_Recommender(df, (47.508802, -122.464284))
