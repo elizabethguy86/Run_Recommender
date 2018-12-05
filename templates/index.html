@@ -51,7 +51,7 @@
       <div class="container d-flex h-100 align-items-center">
         <div class="mx-auto text-center">
           <h1 class="mx-auto my-0 text-uppercase">Run Recommender</h1>
-          <h2 class="text-white-50 mx-auto mt-2 mb-5">A free Run Recommender is a free service utilizing the Strava API. 
+          <h2 class="text-white-50 mx-auto mt-2 mb-5">Run Recommender is a free service utilizing the Strava API. 
             Share your route information to help create a database of runs to recommend to others <a href="http://route.dsi.link">authorize here</a>. 
             Search for new runs based on preferred distance, elevation gain, and location.</h2>
           <a href="#about" class="btn btn-primary js-scroll-trigger">Get Started with recommendations</a>
@@ -66,14 +66,36 @@
           <div class="col-lg-8 mx-auto">
             <h2 class="text-white mb-4">Recommend Runs</h2>
             <p class="text-white-50"> Input your preferred start location here:
-                <form class="form-inline d-flex" method="POST" action=/request>
-                  user_input_location: <input type="text" name="user_input_location" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputCoordinates" placeholder="(Latitude, Longitude)">
-                    <button type="submit" value = "Submit" class="btn btn-primary mx-auto">Find Location</button>
+                <p>Click the button to get your current GPS coordinates.</p>
+
+                <button onclick="getLocation()">Try It</button>
+                
+                <p id="demo"></p>
+                
+                <script>
+                var x = document.getElementById("demo");
+                
+                function getLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(showPosition);
+                    } else { 
+                        x.innerHTML = "Geolocation is not supported by this browser.";
+                    }
+                }
+                
+                function showPosition(position) {
+                    x.innerHTML = "Latitude: " + position.coords.latitude + 
+                    "<br>Longitude: " + position.coords.longitude;
+                }
+                </script>
+                
+                <form class="form-inline d-flex" method="POST" action="/request">
+                  <input type="text" name="user_input_location" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputCoordinates" placeholder="(Latitude, Longitude)">
                 </form>
               </p>
             <p class="text-white-50"> Input your preferred elevation (meters) and distance (miles) here:
-                <form class="form-inline d-flex" method="POST" action=/request>
-                    user_input: <input type="text" name="user_input" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputRequest" placeholder="Elevation(m), Distance">
+                <form class="form-inline d-flex" method="POST" action="/request">
+                    <input type="text" name="user_input" class="form-control flex-fill mr-0 mr-sm-2 mb-3 mb-sm-0" id="inputRequest" placeholder="Elevation(m), Distance">
                     <button type="submit" value = "Submit" class="btn btn-primary mx-auto">Find Runs</button>
             </p>
             
