@@ -24,7 +24,8 @@ def hello_world():
 
 @app.route('/request', methods=['POST'])
 def make_recommendations():
-    '''This will be used with actual user inputs.'''
+    '''Takes in user inputs from website and returns run recommendations
+    with stats on each recommended route and the map of the routes.'''
     location = request.form['user_input_location']
     location = location.split(',')
     location = (float(location[0]), float(location[1]))
@@ -65,11 +66,16 @@ def make_recommendations():
 
 @app.route('/map/<query_id>', methods=['GET'])
 def map(query_id):
+    '''looks up the coordinates in the global dictionary based on 
+    the query_id key. Key is derived from the user inputs of location
+    and the request (see make_recommendations()).'''
     query_id = int(query_id)
     unique_coordinates = coords[query_id]
     return map_runs(unique_coordinates)
 
 def map_runs(unique_coordinates):
+    '''Takes in a list of coordinates for running routesand returns the html for the 
+    folium map with routes plotted in different colors.'''
     #get start point for the map
     print("unique_coordinates[0][0]: ", unique_coordinates[0][0]) #checking outputs
     lat, long = unique_coordinates[0][0]
