@@ -15,6 +15,9 @@ app = Flask(__name__, static_url_path="")
 data = pd.read_csv('Sample_Data/run_data_11-27-2018.csv')
 df = data.iloc[:,1::]
 
+#coordinates dictionary
+coords = {}
+
 @app.route('/') #landing page
 def hello_world():
     return render_template('index.html')
@@ -36,32 +39,36 @@ def make_recommendations():
     map_coordinates = Group.map_coordinates()
     indices_to_use = Group.make_groups(threshold=0.05)
     unique_coordinates = [map_coordinates[i] for i in indices_to_use]
+    query = (location, tuple(req))
+    query_id = hash(query)
+    coords[query_id] = unique_coordinates
     mapping_dict = mapfun.map_indices(indices_to_use, indices)
     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
     mapping = map_runs(unique_coordinates)
-    i_frame = '<iframe src="/map/' + str(unique_coordinates) + '" width="1000" height="500"> </iframe>'
+    i_frame = '<iframe src="/map/' + str(query_id) + '" width="1000" height="500"> </iframe>'
     return render_template('index.html', table = abbrev_stats.to_html(classes=''), map=i_frame)
 
-def table_practice():
-    recommendations = Run_Recommender(df, (47.508802, -122.464284))
-    recommend_dict, similarities = recommendations.recommend_runs([200,15], 5)
-    polylines, indices = recommendations.make_polyline_dict()
-    Group = GroupRuns(polylines, indices, df)
-    map_coordinates = Group.map_coordinates()
-    indices_to_use = Group.make_groups(threshold=0.05)
-    unique_coordinates = [map_coordinates[i] for i in indices_to_use]
-    mapping_dict = mapfun.map_indices(indices_to_use, indices)
-    stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
-    abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
-    return abbrev_stats.to_html(), unique_coordinates
+# def table_practice():
+#     recommendations = Run_Recommender(df, (47.508802, -122.464284))
+#     recommend_dict, similarities = recommendations.recommend_runs([200,15], 5)
+#     polylines, indices = recommendations.make_polyline_dict()
+#     Group = GroupRuns(polylines, indices, df)
+#     map_coordinates = Group.map_coordinates()
+#     indices_to_use = Group.make_groups(threshold=0.05)
+#     unique_coordinates = [map_coordinates[i] for i in indices_to_use]
+#     mapping_dict = mapfun.map_indices(indices_to_use, indices)
+#     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
+#     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
+#     return abbrev_stats.to_html(), unique_coordinates
 
 
-@app.route('/map/<unique_coordinates>')
+@app.route('/map/<int:query_id>', methods=['GET'])
+def map(query_id):
+    unique_coordinates = coords[query_id]
+    return map_runs(unique_coordinates)
+
 def map_runs(unique_coordinates):
-    print(unique_coordinates)
-    if isinstance(unique_coordinates, str):
-        unique_coordinates = eval(unique_coordinates)
     #get start point for the map
     print("unique_coordinates[0][0]: ", unique_coordinates[0][0])
     lat, long = unique_coordinates[0][0]
