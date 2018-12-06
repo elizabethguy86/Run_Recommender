@@ -45,10 +45,11 @@ def make_recommendations():
     coords[query_id] = unique_coordinates
     mapping_dict = mapfun.map_indices(indices_to_use, indices)
     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
-    abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
+    abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']].values
+    stats_df = pd.DataFrame(abbrev_stats, columns=['elevation gain', 'miles'])
     mapping = map_runs(unique_coordinates)
     i_frame = '<iframe src="/map/' + str(query_id) + '" width="1000" height="500"> </iframe>'
-    return render_template('index.html', table = abbrev_stats.to_html(classes=''), map=i_frame)
+    return render_template('index.html', table = stats_df.to_html(classes=''), map=i_frame)
 
 # def table_practice():
 #     recommendations = Run_Recommender(df, (47.508802, -122.464284))
@@ -92,15 +93,15 @@ def map_runs(unique_coordinates):
         bottom: 50px; left: 50px; width: 100px; height: 180px; 
         border:2px solid grey; z-index:9999; font-size:14px;
         ">&nbsp; Routes <br>
-        &nbsp; Route_0 &nbsp; <i class="fa fa-square fa-2x"
+        &nbsp; Route 0 &nbsp; <i class="fa fa-square fa-2x"
                     style="color:blue"></i><br>
-        &nbsp; Route_1 &nbsp; <i class="fa fa-square fa-2x"
+        &nbsp; Route 1 &nbsp; <i class="fa fa-square fa-2x"
                     style="color:green"></i>
-        &nbsp; Route_2 &nbsp; <i class="fa fa-square fa-2x"
+        &nbsp; Route 2 &nbsp; <i class="fa fa-square fa-2x"
                     style="color:red"></i><br>
-        &nbsp; Route_3 &nbsp; <i class="fa fa-square fa-2x"
+        &nbsp; Route 3 &nbsp; <i class="fa fa-square fa-2x"
                     style="color:orange"></i>
-        &nbsp; Route_4 &nbsp; <i class="fa fa-square fa-2x"
+        &nbsp; Route 4 &nbsp; <i class="fa fa-square fa-2x"
                     style="color:purple"></i>
         </div>'''
     m.get_root().html.add_child(folium.Element(legend_html)) #add legend to map
