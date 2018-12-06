@@ -52,7 +52,6 @@ class GroupRuns():
         centroids = self.find_centroids(coordinate_lst)
         #convert centroids to cartesian coordinates
         cartesians = [self.cartesian(x, y) for x, y in centroids]
-        cartesians = cartesians[::-1] #reverse the list for correct order
         lats = []
         longs = []
         elevation_lst = []
