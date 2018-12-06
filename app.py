@@ -63,8 +63,9 @@ def make_recommendations():
 #     return abbrev_stats.to_html(), unique_coordinates
 
 
-@app.route('/map/<int:query_id>', methods=['GET'])
+@app.route('/map/<query_id>', methods=['GET'])
 def map(query_id):
+    query_id = int(query_id)
     unique_coordinates = coords[query_id]
     return map_runs(unique_coordinates)
 
