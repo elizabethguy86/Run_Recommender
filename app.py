@@ -71,7 +71,7 @@ def map(query_id):
 
 def map_runs(unique_coordinates):
     #get start point for the map
-    print("unique_coordinates[0][0]: ", unique_coordinates[0][0])
+    print("unique_coordinates[0][0]: ", unique_coordinates[0][0]) #checking outputs
     lat, long = unique_coordinates[0][0]
     m = folium.Map(location=[lat, long], zoom_start=12.3)
     for idx, route in enumerate(unique_coordinates[0:5]):
