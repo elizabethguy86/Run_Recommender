@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import polyline
 from collections import defaultdict, Counter
+from math import radians,cos,sin
 from sklearn.metrics.pairwise import cosine_similarity
 from scipy.cluster import  hierarchy
 
@@ -33,6 +34,15 @@ class GroupRuns():
             centroid = (round(np.mean(lats), 3), round(np.mean(longs), 3))
             centroids.append(centroid)
         return centroids
+    
+    def cartesian(self, lat, long):
+        '''converts circular coordinates to cartesian.'''
+        x = radians(lat)
+        y = radians(long)
+        r = 6371.0 #radius in km here
+        converted_lat = r * cos(x) * cos(y)
+        converted_long = r * cos(x) * sin(y)
+        return converted_lat, converted_long
 
     def make_comparison_array(self):
         '''Generates an array for the top recommended runs (rows).  Column features are
