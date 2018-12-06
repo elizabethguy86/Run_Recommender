@@ -50,10 +50,13 @@ class GroupRuns():
         coordinate_lst = self.map_coordinates()
         indices = self.indices 
         centroids = self.find_centroids(coordinate_lst)
+        #convert centroids to cartesian coordinates
+        cartesians = [self.cartesian(x, y) for x, y in centroids]
+        cartesians = cartesians[::-1] #reverse the list for correct order
         lats = []
         longs = []
         elevation_lst = []
-        for c in centroids:
+        for c in cartesians:
             lats.append(c[0])
             longs.append(c[1])
         for idx in indices: #get the elevation for the runs in the suggestion list.
