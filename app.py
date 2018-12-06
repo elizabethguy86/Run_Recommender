@@ -26,6 +26,12 @@ def hello_world():
 def make_recommendations():
     '''Takes in user inputs from website and returns run recommendations
     with stats on each recommended route and the map of the routes.'''
+    if not request.form['user_input_location']:
+        script = '<p class="text-white-50">Please enter a location.</p>'
+        return render_template('index.html', message=script)
+    elif not request.form['user_input']:
+        script = '<p class="text-white-50">Please enter your preferred elevation gain and distance.</p>'
+        return render_template('index.html', message=script)
     location = request.form['user_input_location']
     location = location.split(',')
     location = (float(location[0]), float(location[1]))
@@ -52,19 +58,6 @@ def make_recommendations():
     mapping = map_runs(unique_coordinates)
     i_frame = '<iframe src="/map/' + str(query_id) + '" width="1000" height="500"> </iframe>'
     return render_template('index.html', table = stats_df.to_html(classes=''), map=i_frame)
-
-# def table_practice():
-#     recommendations = Run_Recommender(df, (47.508802, -122.464284))
-#     recommend_dict, similarities = recommendations.recommend_runs([200,15], 5)
-#     polylines, indices = recommendations.make_polyline_dict()
-#     Group = GroupRuns(polylines, indices, df)
-#     map_coordinates = Group.map_coordinates()
-#     indices_to_use = Group.make_groups(threshold=0.05)
-#     unique_coordinates = [map_coordinates[i] for i in indices_to_use]
-#     mapping_dict = mapfun.map_indices(indices_to_use, indices)
-#     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
-#     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
-#     return abbrev_stats.to_html(), unique_coordinates
 
 
 @app.route('/map/<query_id>', methods=['GET'])
