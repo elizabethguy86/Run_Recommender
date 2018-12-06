@@ -24,6 +24,7 @@ class GroupRuns():
         return map_coordinates
     
     def find_centroids(self, coordinate_lst):
+        '''Find the centroid lat, long for coordinates in coordinate_lst.'''
         centroids = []
         for l in coordinate_lst:
             lats = []
