@@ -66,14 +66,14 @@
           <div class="col-lg-8 mx-auto">
             <h2 class="text-white mb-4">Recommend Runs</h2>
             <p class="text-white-50"> Get Started Here
-                <p class="text-white-50">Click the button to get your current GPS coordinates.</p>
+                <p class="text-white-50">Click the button to populate your current GPS coordinates here.</p>
 
                 <button onclick="getLocation()">Try It</button>
                 
-                <p class="text-white-50" id="demo"></p>
+                <p class="text-white-50" id="location"></p>
                 
                 <script>
-                var x = document.getElementById("demo");
+                // var x = document.getElementById("location");
                 
                 function getLocation() {
                     if (navigator.geolocation) {
@@ -84,8 +84,8 @@
                 }
                 
                 function showPosition(position) {
-                    x.innerHTML = "Latitude: " + position.coords.latitude.toFixed(3) + 
-                    "<br>Longitude: " + position.coords.longitude.toFixed(4);
+                    document.getElementById("inputCoordinates").value = position.coords.latitude.toFixed(3)
+                    + ','+ position.coords.longitude.toFixed(3);
                 }
                 </script>
               </p>
