@@ -19,4 +19,4 @@ Several of the runs in the database are repeats of the same route, or very simil
 Use the functions in `Mapping_Functions` to make maps of your suggested routes.
 
 **Website:**
-Try out the Run_Recommender by visiting [pnwrun.org](https://http://pnwrun.org/). The `index.html` file in templates works in conjunction with the `app.py` file.  `app.py` can be run on a FLASK server using the command `FLASK_APP=app.py flask run`.
+Try out the Run_Recommender by visiting [pnwrun.org](https://pnwrun.org/). The `index.html` file in templates works in conjunction with the `app.py` file.  `app.py` can be run on a FLASK server using the command `FLASK_APP=app.py flask run`.
