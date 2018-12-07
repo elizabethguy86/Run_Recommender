@@ -5,3 +5,7 @@ Mapping_Functions/__pycache__/
 discrete_frechet/
 Testing_Only.ipynb
 Run_Recommender_Scratchwork.ipynb
+
+# Secret keys
+.strava_client_secret
+.strava_client_id
