@@ -8,6 +8,10 @@ A Run Recommendation Program Utilizing the Strava API
 
 The proposed solution to the route finding issue is to utilze runs collected from other Strava members and recommend runs based on similarity to a list of preferred location proximity, distance, and elevation gain.  This application utilizes the Strava API to collect runs, approved by users through this [link](https://route.dsi.link/)(see also [this_github](https://github.com/elizabethguy86/runpaw)).
 
+**Model:**
+The model takes in running routes from approved Strava users.  The json data is converted into a dictionary and read into a pandas dataframe with the following features:  'upload_id','average_speed','distance', 'elapsed_time','total_elevation_gain','type','start_date_local','start_latlng','end_latlng', 'map'].  Only activities of 'type' == 'run' are utilized.  The resultant dataframe is further filtered by examining the great circle distance from the current location to the 'start_latlng'.  If the activity start distance is <= the user-specified distance away from their preferrd location, the activity is included. The user then specifies their preferred distance to run and elevation gain.  The 20 most similar runs based on euclidean distance are then selected, grouped by hierarchical clustering according to cosine similarity, and 5 routes are selected from the resultant groups.  Groups with large numbers of runs are prioritized for selection.
+
+
 **Instructions:**
 Use `Setup_Initial_DataFrame.py` as a template to create your initial dataframe of activities. Uses instance of the Activities class to create a dataframe containing features specified in the cols variable.  Note that user tokens (required for data access) are stored in a MongoDB on AWS in this instance.  Thus, code to extract tokens will differ from situation to situation.
 
