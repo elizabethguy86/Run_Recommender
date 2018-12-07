@@ -32,6 +32,9 @@ def make_recommendations():
     elif not request.form['user_input']:
         script = '<p class="text-white-50">Please enter your preferred elevation gain and distance.</p>'
         return render_template('index.html', message=script)
+    elif not request.form['input_dist']:
+        script = '<p class="text-white-50">Please enter the preferred distance you are willing to travel.</p>'
+        return render_template('index.html', message=script)
     location = request.form['user_input_location']
     location = location.split(',')
     location = (float(location[0]), float(location[1]))
