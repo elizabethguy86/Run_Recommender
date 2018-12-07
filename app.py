@@ -14,6 +14,13 @@ mc = pymongo.MongoClient()
 db = mc['runpaw']
 tokens = db['strava_tokens']
 
+with open('redirect_uri.txt') as f:
+    REDIRECT_URI = f.read().strip()
+with open('.strava_client_secret') as f:
+    STRAVA_CLIENT_SECRET = f.read().strip()
+with open('.strava_client_id') as f:
+    STRAVA_CLIENT_ID = f.read().strip()
+
 app = Flask(__name__, static_url_path="")
 
 #dataframe to pull from
