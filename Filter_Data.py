@@ -75,8 +75,8 @@ class Run_Recommender():
     #     return np.array([std_elevation,std_distance])
 
     def recommend_runs(self, request, dist):
-        '''Inputs are a list of user-specified elevation gain in meters and miles to run, 
-        and distance away for willingness to travel to a run.  
+        '''Inputs are a list of user-specified elevation gain in meters and miles to run
+        [meters, miles], and distance away (float) for willingness to travel to a run.  
         Output is a dictionary of polyline maps for route recommendations.'''
         df = self.get_distances()
         self.request = request
