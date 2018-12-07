@@ -40,7 +40,8 @@ def make_recommendations():
     req = request.form['user_input']
     req = req.split(',')
     req = [float(req[0])*0.3048, float(req[1])] #convert feet to meters
-    recommend_dict, similarities = recommendations.recommend_runs(req, 5)
+    dist = float(request.form['input_dist'])
+    recommend_dict, similarities = recommendations.recommend_runs(req, dist)
     polylines, indices = recommendations.make_polyline_dict()
     Group = GroupRuns(polylines, indices, df)
     map_coordinates = Group.map_coordinates()
