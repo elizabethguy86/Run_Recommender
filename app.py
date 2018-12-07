@@ -23,9 +23,6 @@ df = data.iloc[:,1::]
 #coordinates dictionary
 coords = {}
 
-#authorization url
-AUTH_URL = get_auth_url()
-
 #authorize new users
 def get_auth_url():
     """Get the Strava authorization URL."""
@@ -34,6 +31,9 @@ def get_auth_url():
         client_id=STRAVA_CLIENT_ID,
         redirect_uri= REDIRECT_URI)
     return auth_url
+
+#authorization url
+AUTH_URL = get_auth_url()
 
 #landing page
 @app.route('/')
