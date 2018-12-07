@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import pymongo
+from stravalib import Client
 from Filter_Data import Run_Recommender
 from Group_Runs import GroupRuns
 import Mapping_Functions.Map_Routes as mapfun
@@ -8,6 +10,9 @@ import folium
 
 from flask import Flask, request, render_template, jsonify
 
+mc = pymongo.MongoClient()
+db = mc['runpaw']
+tokens = db['strava_tokens']
 
 app = Flask(__name__, static_url_path="")
 
@@ -18,28 +23,52 @@ df = data.iloc[:,1::]
 #coordinates dictionary
 coords = {}
 
-@app.route('/') #landing page
-def hello_world():
-    return render_template('index.html')
+#authorization url
+AUTH_URL = get_auth_url()
 
+#authorize new users
+def get_auth_url():
+    """Get the Strava authorization URL."""
+    client = Client()
+    auth_url = client.authorization_url(
+        client_id=STRAVA_CLIENT_ID,
+        redirect_uri= REDIRECT_URI)
+    return auth_url
+
+#landing page
+@app.route('/')
+def hello_world():
+    return render_template('index.html', auth_url=AUTH_URL)
+
+#authorization page
+@app.route('/authorization')
+def authorize():
+    code = request.args.get('code')
+    client = Client()
+    access_token = client.exchange_code_for_token(client_id=STRAVA_CLIENT_ID,
+						  client_secret=STRAVA_CLIENT_SECRET,
+						  code=code)
+    tokens.insert_one({'token': access_token})
+    return render_template('success.html', token=access_token)
+
+#return recommendations
 @app.route('/request', methods=['POST'])
 def make_recommendations():
     '''Takes in user inputs from website and returns run recommendations
     with stats on each recommended route and the map of the routes.'''
     if not request.form['user_input_location']:
         script = '<p class="text-white-50">Please enter a location.</p>'
-        return render_template('index.html', message=script)
+        return render_template('index.html', message=script, auth_url=AUTH_URL)
     elif not request.form['user_input']:
         script = '<p class="text-white-50">Please enter your preferred elevation gain and distance.</p>'
-        return render_template('index.html', message=script)
+        return render_template('index.html', message=script, auth_url=AUTH_URL)
     elif not request.form['input_dist']:
         script = '<p class="text-white-50">Please enter the preferred distance you are willing to travel.</p>'
-        return render_template('index.html', message=script)
+        return render_template('index.html', message=script, auth_url=AUTH_URL)
     location = request.form['user_input_location']
     location = location.split(',')
     location = (float(location[0]), float(location[1]))
     recommendations = Run_Recommender(df, location)
-    #recommendations = Run_Recommender(df, (47.508802, -122.464284))
     req = request.form['user_input']
     req = req.split(',')
     req = [float(req[0])*0.3048, float(req[1])] #convert feet to meters
@@ -61,9 +90,10 @@ def make_recommendations():
     stats_df = pd.DataFrame(abbrev_stats, columns=['elevation gain', 'miles'])
     mapping = map_runs(unique_coordinates)
     i_frame = '<iframe src="/map/' + str(query_id) + '" width="1000" height="500"> </iframe>'
-    return render_template('index.html', table = stats_df.to_html(classes=''), map=i_frame)
+    return render_template('index.html', table = stats_df.to_html(classes=''),
+                             map=i_frame, auth_url=AUTH_URL)
 
-
+#map rendering
 @app.route('/map/<query_id>', methods=['GET'])
 def map(query_id):
     '''looks up the coordinates in the global dictionary based on 
@@ -73,6 +103,7 @@ def map(query_id):
     unique_coordinates = coords[query_id]
     return map_runs(unique_coordinates)
 
+#map creation
 def map_runs(unique_coordinates):
     '''Takes in a list of coordinates for running routesand returns the html for the 
     folium map with routes plotted in different colors.'''
