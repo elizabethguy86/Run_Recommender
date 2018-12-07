@@ -77,7 +77,6 @@ class Run_Recommender():
         if len(df) == 0:
             raise Exception("No Runs in this area.  Try again with different coordinates")
         else: 
-            # df = df[df['distance_away']<= dist] #filter dataframe for the requested distance range
             X = df.loc[:,['total_elevation_gain', 'miles_converted']]
             scaler.fit(X)
             similarity_df = scaler.transform(X)
