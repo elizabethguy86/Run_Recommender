@@ -14,7 +14,7 @@ The model takes in running routes from approved Strava users.  The json data is 
 **Tools Used:**
 * Data Storage/Manipulation: MongoDB and Pandas
 * Clustering: Scipy and Scikit Learn
-* Display: Leaflet
+* Map Display: Leaflet
 * Website: Flask and AWS (web hosting)
 
 ![tools](https://github.com/elizabethguy86/Run_Recommender/blob/master/Presentation/Tools_Used.jpg)
