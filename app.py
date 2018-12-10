@@ -99,6 +99,7 @@ def make_recommendations():
     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
     abbrev_stats['total_elevation_gain'] = abbrev_stats.loc[:, ['total_elevation_gain']]*1.3208
+    abbrev_stats.index = np.arange(1, len(abbrev_stats)+1)
     abbrev_stats = abbrev_stats.values
     stats_df = pd.DataFrame(abbrev_stats, columns=['elevation gain', 'miles'])
     mapping = map_runs(unique_coordinates)
