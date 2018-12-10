@@ -80,7 +80,7 @@ def make_recommendations():
         return render_template('index.html', message=script, auth_url=AUTH_URL)
     location = request.form['user_input_location']
     location = location.split(',')
-    location = (float(location[0]), float(location[1]))
+    location = (float(location[0]), float(location[1])) #change from txt to float
     recommendations = Run_Recommender(df, location)
     req = request.form['user_input']
     req = req.split(',')
