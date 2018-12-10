@@ -58,6 +58,12 @@ def authorize():
     tokens.insert_one({'token': access_token})
     return render_template('success.html', token=access_token)
 
+#error page
+@app.errorhandler(500)
+def page_not_found(e):
+    script = '<p class="text-white-50">No runs in this area.  Please try again.</p>'
+    return render_template('index.html', message=script)
+
 #return recommendations
 @app.route('/request', methods=['POST'])
 def make_recommendations():
