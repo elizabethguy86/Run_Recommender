@@ -12,10 +12,10 @@ The proposed solution to the route finding issue is to utilze runs collected fro
 The model takes in running routes from approved Strava users.  The json data is converted into a dictionary and read into a pandas dataframe with the following features:  'upload_id','average_speed','distance', 'elapsed_time','total_elevation_gain','type','start_date_local','start_latlng','end_latlng', 'map'].  Only activities of 'type' == 'run' are utilized.  The resultant dataframe is further filtered by examining the great circle distance from the current location to the 'start_latlng'.  If the activity start distance is <= the user-specified distance away from their preferrd location, the activity is included. The user then specifies their preferred distance to run and elevation gain.  The 20 most similar runs based on euclidean distance are then selected.  Similar runs are grouped by hierarchical clustering according to cosine similarity, using the standardized centroid of the lat, long coordinates for each route (converted to cartesian coordinate space) and elevation gain.  Then, 5 routes are selected from the resultant groups.  Groups with large numbers of runs are prioritized for selection.
 
 **Tools Used:**
-Data Storage/Manipulation: MongoDB and Pandas
-Clustering: Scipy and Scikit Learn
-Display: Leaflet
-Website: Flask and AWS (web hosting)
+* Data Storage/Manipulation: MongoDB and Pandas
+* Clustering: Scipy and Scikit Learn
+* Display: Leaflet
+* Website: Flask and AWS (web hosting)
 
 ![tools](https://github.com/elizabethguy86/Run_Recommender/blob/master/Presentation/Tools_Used.jpg)
 
