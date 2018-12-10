@@ -137,15 +137,15 @@ def map_runs(unique_coordinates):
         bottom: 50px; left: 50px; width: 100px; height: 180px; 
         border:2px solid grey; z-index:9999; font-size:14px;
         ">&nbsp; Routes <br>
-        &nbsp; Route 0 &nbsp; <i class="fa fa-square fa-2x"
-                    style="color:blue"></i><br>
         &nbsp; Route 1 &nbsp; <i class="fa fa-square fa-2x"
-                    style="color:green"></i>
+                    style="color:blue"></i><br>
         &nbsp; Route 2 &nbsp; <i class="fa fa-square fa-2x"
-                    style="color:red"></i><br>
+                    style="color:green"></i>
         &nbsp; Route 3 &nbsp; <i class="fa fa-square fa-2x"
-                    style="color:orange"></i>
+                    style="color:red"></i><br>
         &nbsp; Route 4 &nbsp; <i class="fa fa-square fa-2x"
+                    style="color:orange"></i>
+        &nbsp; Route 5 &nbsp; <i class="fa fa-square fa-2x"
                     style="color:purple"></i>
         </div>'''
     m.get_root().html.add_child(folium.Element(legend_html)) #add legend to map
