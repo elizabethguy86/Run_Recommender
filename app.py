@@ -48,7 +48,7 @@ def hello_world():
     return render_template('index.html', auth_url=AUTH_URL)
 
 #authorization page
-@app.route('/authorization')
+@app.route('/authorize')
 def authorize():
     code = request.args.get('code')
     client = Client()
