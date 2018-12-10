@@ -99,9 +99,9 @@ def make_recommendations():
     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
     abbrev_stats['total_elevation_gain'] = abbrev_stats.loc[:, ['total_elevation_gain']]*1.3208
-    abbrev_stats.index = np.arange(1, len(abbrev_stats)+1)
     abbrev_stats = abbrev_stats.values
     stats_df = pd.DataFrame(abbrev_stats, columns=['elevation gain', 'miles'])
+    stats_df.index = np.arange(1, len(abbrev_stats)+1)
     mapping = map_runs(unique_coordinates)
     i_frame = '<iframe src="/map/' + str(query_id) + '" width="1000" height="500"> </iframe>'
     return render_template('index.html', table = stats_df.to_html(classes=''),
