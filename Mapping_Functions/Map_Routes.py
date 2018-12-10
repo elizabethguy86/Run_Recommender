@@ -16,6 +16,7 @@ class'''
 # Group = GroupRuns(polylines, indices, df)
 # map_coordinates = Group.map_coordinates()
 # indices_to_use = Group.make_groups(threshold=0.05) """threshold may be changed for cosine sim distance groups"""
+# unique_coordinates = [map_coordinates[i] for i in indices_to_use]
 
 def map_indices(indices_to_use, indices):
     '''Takes in indices_to_use from 20 suggested routes and the actual indices of the 20 routes in the larger
@@ -39,7 +40,7 @@ def return_route_stats(mapping_dict, indices_to_use, df):
 #return_route_stats(mapping_dict, indices_to_use, df)
 
 #get start point for the map
-# lat, long = map_coordinates[0][0]
+# lat, long = unique_coordinates[0][0]
 # m = folium.Map(location=[lat, long], zoom_start=12.2)
 
 # for idx, route in enumerate(unique_coordinates[0:5]):
