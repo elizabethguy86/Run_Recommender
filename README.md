@@ -19,6 +19,9 @@ The model takes in running routes from approved Strava users.  The json data is 
 
 ![tools](https://github.com/elizabethguy86/Run_Recommender/blob/master/Presentation/Tools_Used.jpg)
 
+**Model Measurement:**
+User feedback was collected via survey with a 5 point Likert scale ([survey link](https://goo.gl/forms/UMuNlv6t8kjVNb1q1)).  Features measured were run variety, specificity of run metrics, and likelihood of running a suggestd route.
+
 **Website:**
 Try out the Run_Recommender by visiting [pnwrun.org](http://pnwrun.org/). The `index.html` file in templates works in conjunction with the `app.py` file.  `app.py` can be run on a FLASK server using the command `FLASK_APP=app.py flask run`.
 
