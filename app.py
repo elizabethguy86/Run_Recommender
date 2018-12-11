@@ -8,9 +8,9 @@ import Mapping_Functions.Map_Routes as mapfun
 from io import BytesIO
 import folium 
 
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, request, render_template
 
-mc = pymongo.MongoClient()
+mc = pymongo.MongoClient() #setup mongo client to store tokens for approved users
 db = mc['runpaw']
 tokens = db['strava_tokens']
 
