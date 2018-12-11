@@ -2,6 +2,8 @@
 from Activities_Dictionary import Activities
 from Filter_Data import Run_Recommender
 from Group_Runs import GroupRuns
+import pandas as pd
+import numpy as np
 import folium
 
 '''initialize the map. map_coordinates should come from GroupRuns() class, which 
@@ -34,7 +36,13 @@ def return_route_stats(mapping_dict, indices_to_use, df):
     '''Returns the elevation gain and miles for the routes that will be returned'''
     mapping = [mapping_dict[i] for i in indices_to_use[0:5]]
     slice_df = df.iloc[mapping]
-    return slice_df.loc[:, ['total_elevation_gain', 'miles_converted']].reset_index()
+    slice_df = slice_df.loc[:, ['total_elevation_gain', 'miles_converted']]
+    #convert elevation gain to feet
+    slice_df['total_elevation_gain'] = slice_df.loc[:, ['total_elevation_gain']]*1.3208
+    abbrev_stats = slice_df.values
+    stats_df = pd.DataFrame(abbrev_stats, columns=['elevation gain', 'miles'])
+    stats_df.index = np.arange(1, len(abbrev_stats)+1)
+    return stats_df
 
 #dataframe of indices from original df, elevation gain(m), and the miles of each route
 #return_route_stats(mapping_dict, indices_to_use, df)
@@ -56,15 +64,15 @@ legend_html = '''<div style= "position: fixed;
      bottom: 50px; left: 50px; width: 100px; height: 180px; 
      border:2px solid grey; z-index:9999; font-size:14px;
      ">&nbsp; Routes <br>
-     &nbsp; Route_0 &nbsp; <i class="fa fa-square fa-2x"
-                  style="color:blue"></i><br>
      &nbsp; Route_1 &nbsp; <i class="fa fa-square fa-2x"
-                  style="color:green"></i>
+                  style="color:blue"></i><br>
      &nbsp; Route_2 &nbsp; <i class="fa fa-square fa-2x"
-                  style="color:red"></i><br>
+                  style="color:green"></i>
      &nbsp; Route_3 &nbsp; <i class="fa fa-square fa-2x"
-                  style="color:orange"></i>
+                  style="color:red"></i><br>
      &nbsp; Route_4 &nbsp; <i class="fa fa-square fa-2x"
+                  style="color:orange"></i>
+     &nbsp; Route_5 &nbsp; <i class="fa fa-square fa-2x"
                   style="color:purple"></i>
     </div>'''
     
