@@ -80,11 +80,13 @@ def make_recommendations():
         return render_template('index.html', message=script, auth_url=AUTH_URL)
     location = request.form['user_input_location']
     location = location.split(',')
-    location = (float(location[0]), float(location[1])) #change from txt to float
+    #change from txt to float
+    location = (float(location[0]), float(location[1])) 
     recommendations = Run_Recommender(df, location)
     req = request.form['user_input']
     req = req.split(',')
-    req = [float(req[0])*0.3048, float(req[1])] #convert feet to meters
+    #convert feet to meters
+    req = [float(req[0])*0.3048, float(req[1])] 
     dist = float(request.form['input_dist'])
     recommend_dict, similarities = recommendations.recommend_runs(req, dist)
     polylines, indices = recommendations.make_polyline_dict()
@@ -98,6 +100,7 @@ def make_recommendations():
     mapping_dict = mapfun.map_indices(indices_to_use, indices)
     stats = mapfun.return_route_stats(mapping_dict, indices_to_use, df)
     abbrev_stats = stats.loc[:, ['total_elevation_gain', 'miles_converted']]
+    #convert elevation gain to feet
     abbrev_stats['total_elevation_gain'] = abbrev_stats.loc[:, ['total_elevation_gain']]*1.3208
     abbrev_stats = abbrev_stats.values
     stats_df = pd.DataFrame(abbrev_stats, columns=['elevation gain', 'miles'])
