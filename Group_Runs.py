@@ -53,7 +53,7 @@ class GroupRuns():
         indices = self.indices 
         centroids = self.find_centroids(coordinate_lst)
         #convert centroids to cartesian coordinates
-        cartesians = [self.cartesian(x, y, z) for x, y in centroids]
+        cartesians = [self.cartesian(x, y) for x, y in centroids]
         xs = []
         ys = []
         zs = []
