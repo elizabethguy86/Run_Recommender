@@ -38,12 +38,13 @@ class GroupRuns():
     
     def cartesian(self, lat, long):
         '''converts circular coordinates to cartesian.'''
-        x = radians(lat)
-        y = radians(long)
+        phi = radians(90-lat)
+        theta = radians(long)
         r = 6371.0 #radius in km here
-        converted_lat = r * cos(x) * cos(y)
-        converted_long = r * cos(x) * sin(y)
-        return converted_lat, converted_long
+        x = r * sin(phi) * cos(theta)
+        y = r * sin(phi) * sin(theta)
+        z = r * cos(phi)
+        return x, y, z
 
     def make_comparison_array(self):
         '''Generates an array for the top recommended runs (rows).  Column features are
@@ -52,17 +53,19 @@ class GroupRuns():
         indices = self.indices 
         centroids = self.find_centroids(coordinate_lst)
         #convert centroids to cartesian coordinates
-        cartesians = [self.cartesian(x, y) for x, y in centroids]
-        lats = []
-        longs = []
+        cartesians = [self.cartesian(x, y, z) for x, y in centroids]
+        xs = []
+        ys = []
+        zs = []
         elevation_lst = []
         for c in cartesians:
-            lats.append(c[0])
-            longs.append(c[1])
+            xs.append(c[0])
+            ys.append(c[1])
+            zs.append(c[2])
         for idx in indices: #get the elevation for the runs in the suggestion list.
             row = self.df.loc[idx] 
             elevation_lst.append(row['total_elevation_gain'])
-        comparison_df = pd.DataFrame({'lats': lats, 'longs':longs, 'elevation':elevation_lst})
+        comparison_df = pd.DataFrame({'lats': xs, 'longs': ys, 'zs': zs, elevation':elevation_lst})
         comparison_array = comparison_df.values
         comparison_array_std = (comparison_array - np.mean(comparison_array, axis=0)) / np.std(comparison_array, axis=0)
         #make comparisons with all the datapoints in the comparison array
