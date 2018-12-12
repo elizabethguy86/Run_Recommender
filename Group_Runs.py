@@ -65,7 +65,7 @@ class GroupRuns():
         for idx in indices: #get the elevation for the runs in the suggestion list.
             row = self.df.loc[idx] 
             elevation_lst.append(row['total_elevation_gain'])
-        comparison_df = pd.DataFrame({'lats': xs, 'longs': ys, 'zs': zs, elevation':elevation_lst})
+        comparison_df = pd.DataFrame({'lats': xs, 'longs': ys, 'zs': zs, 'elevation':elevation_lst})
         comparison_array = comparison_df.values
         comparison_array_std = (comparison_array - np.mean(comparison_array, axis=0)) / np.std(comparison_array, axis=0)
         #make comparisons with all the datapoints in the comparison array
