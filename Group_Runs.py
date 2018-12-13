@@ -48,7 +48,7 @@ class GroupRuns():
 
     def make_comparison_array(self):
         '''Generates an array for the top recommended runs (rows).  Column features are
-        centroid latitude, centroid longitude, and elevation gain.'''
+        standardized centroid x,y,z for each route and elevation gain.'''
         coordinate_lst = self.map_coordinates()
         indices = self.indices 
         centroids = self.find_centroids(coordinate_lst)
