@@ -10,4 +10,4 @@ mc = MongoClient(host='localhost:47017')
 users = mc['your_database']
 tokens = list(users.strava_tokens.find())
 
-Once tokens are acquired, the run activities can be retrieved from Strava.
+Once tokens are acquired, the run activities can be retrieved from Strava and stored in a dataframe as demonstrated in `Setup_Initial_Dataframe.py`.

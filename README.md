@@ -26,7 +26,7 @@ User feedback was collected via survey with a 5 point Likert scale ([survey link
 Try out the Run_Recommender by visiting [pnwrun.org](http://pnwrun.org/). The `index.html` file in templates works in conjunction with the `app.py` file.  `app.py` can be run on a FLASK server using the command `FLASK_APP=app.py flask run`.
 
 **Instructions:**
-Use `Setup_Initial_DataFrame.py` as a template to create your initial dataframe of activities. The template uses an instance of the Activities class to create a dataframe containing features specified in the cols variable.  Note that user tokens (required for data access) are stored in a MongoDB on AWS in this example.  Thus, code to extract tokens will differ from situation to situation.
+The `model` folder contains functions and classess for setting up the activities dataframe, filtering data, and grouping routes that are copies of each other in order to return unique routes to the users.  Use `Setup_Initial_DataFrame.py` as a template to create your initial dataframe of activities. The template uses an instance of the Activities class to create a dataframe containing features specified in the cols variable.  Note that user tokens (required for data access) are stored in a MongoDB on AWS in this example.  Thus, code to extract tokens will differ from situation to situation.
 
 Once your dataframe is created, you can use the `Run_Recommender()` class from 
 `Filter_Data.py`.  Run_Recommender is initialized with the dataframe and a (lat, long) tuple for starting coordinates.  Recommend runs by calling self.recommend_runs(), which requires a request input: list of [elevation gain(meters), distance(miles) to run]) and a distance(float) in miles that you are willing to travel from the starting coordinates for a run.
