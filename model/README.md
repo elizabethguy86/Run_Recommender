@@ -1,6 +1,5 @@
 #### Get tokens from MongoDB
-This system assumes that tokens are stored in MongoDB on a cloud server.  To get access
-to the database, remap localhost to EC2 server in bash:
+Access tokens are required to retrieve data from the Strava API.  This system assumes that tokens are stored in MongoDB on a cloud server.  To get access to the database, remap localhost to EC2 server in bash:
 
 `! ssh -NL 47017:localhost:27017 [your EC2 name]`
 
