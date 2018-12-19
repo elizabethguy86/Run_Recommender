@@ -13,15 +13,10 @@ tokens = list(users.strava_tokens.find())
 def make_tokens_list(tokens):
     '''Take a list of users from MongoDB and extract their
        tokens from the dictionary objects in the list'''
-    tokens_list = []
-    unique = []
+    tokens_set = set() #create set to avoid multiple copies of token
     for token in tokens:
-        tokens_list.append(token['token'])
-    for item in tokens_list:
-        #if someone double-clicks the Oauth2 link, you get copies of the token
-        if item not in unique: #store one token copy
-            unique.append(item)
-    return unique
+        tokens_set.add(token['token'])
+    return tokens_set
 
 #get all the unique tokens
 tokens_unique = make_tokens_list(tokens)
