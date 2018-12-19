@@ -10,7 +10,7 @@ mc = MongoClient(host='localhost:47017')
 users = mc['runpaw']
 tokens = list(users.strava_tokens.find())
 
-def make_tokens_list(tokens):
+def make_tokens(tokens):
     '''Take a list of users from MongoDB and extract their
        tokens from the dictionary objects in the list'''
     tokens_set = set() #create set to avoid multiple copies of token
@@ -19,7 +19,7 @@ def make_tokens_list(tokens):
     return tokens_set
 
 #get all the unique tokens
-tokens_unique = make_tokens_list(tokens)
+tokens_unique = make_tokens(tokens)
 
 #columns to use:
 cols = ['upload_id',
